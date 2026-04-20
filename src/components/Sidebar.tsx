@@ -4,8 +4,6 @@ import {
   Wallet,
   LifeBuoy,
   Users,
-  Activity,
-  Mail,
   Settings,
   ChevronDown,
   Search,
@@ -32,8 +30,6 @@ const mainNav: NavItem[] = [
 
 const managementNav: NavItem[] = [
   { to: "/users", label: "Users", icon: Users },
-  { to: "/monitoring", label: "Monitoring", icon: Activity },
-  { to: "/email-templates", label: "Email Templates", icon: Mail },
 ];
 
 export function Sidebar() {
