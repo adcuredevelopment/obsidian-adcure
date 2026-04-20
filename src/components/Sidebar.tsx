@@ -10,6 +10,7 @@ import {
   Sun,
   Moon,
   Megaphone,
+  FileText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ const mainNav: NavItem[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/ad-accounts", label: "Ad Accounts", icon: Megaphone, badge: "2" },
   { to: "/wallets", label: "Wallets", icon: Wallet },
+  { to: "/invoices", label: "Invoices", icon: FileText },
   { to: "/support", label: "Support", icon: LifeBuoy },
 ];
 
@@ -126,12 +128,13 @@ export function Sidebar() {
                 <Moon className="h-4 w-4" />
               )}
             </button>
-            <button
+            <Link
+              to="/settings"
               className="rounded-md p-1.5 text-muted-foreground hover:bg-background/60 hover:text-foreground"
               aria-label="Settings"
             >
               <Settings className="h-4 w-4" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
