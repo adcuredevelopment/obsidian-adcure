@@ -9,38 +9,174 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WalletsRouteImport } from './routes/wallets'
+import { Route as UsersRouteImport } from './routes/users'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
+import { Route as EmailTemplatesRouteImport } from './routes/email-templates'
+import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
 
+const WalletsRoute = WalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailTemplatesRoute = EmailTemplatesRouteImport.update({
+  id: '/email-templates',
+  path: '/email-templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdAccountsRoute = AdAccountsRouteImport.update({
+  id: '/ad-accounts',
+  path: '/ad-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsersUserIdRoute = UsersUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
+  getParentRoute: () => UsersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ad-accounts': typeof AdAccountsRoute
+  '/email-templates': typeof EmailTemplatesRoute
+  '/monitoring': typeof MonitoringRoute
+  '/support': typeof SupportRoute
+  '/users': typeof UsersRouteWithChildren
+  '/wallets': typeof WalletsRoute
+  '/users/$userId': typeof UsersUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ad-accounts': typeof AdAccountsRoute
+  '/email-templates': typeof EmailTemplatesRoute
+  '/monitoring': typeof MonitoringRoute
+  '/support': typeof SupportRoute
+  '/users': typeof UsersRouteWithChildren
+  '/wallets': typeof WalletsRoute
+  '/users/$userId': typeof UsersUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ad-accounts': typeof AdAccountsRoute
+  '/email-templates': typeof EmailTemplatesRoute
+  '/monitoring': typeof MonitoringRoute
+  '/support': typeof SupportRoute
+  '/users': typeof UsersRouteWithChildren
+  '/wallets': typeof WalletsRoute
+  '/users/$userId': typeof UsersUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/ad-accounts'
+    | '/email-templates'
+    | '/monitoring'
+    | '/support'
+    | '/users'
+    | '/wallets'
+    | '/users/$userId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/ad-accounts'
+    | '/email-templates'
+    | '/monitoring'
+    | '/support'
+    | '/users'
+    | '/wallets'
+    | '/users/$userId'
+  id:
+    | '__root__'
+    | '/'
+    | '/ad-accounts'
+    | '/email-templates'
+    | '/monitoring'
+    | '/support'
+    | '/users'
+    | '/wallets'
+    | '/users/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdAccountsRoute: typeof AdAccountsRoute
+  EmailTemplatesRoute: typeof EmailTemplatesRoute
+  MonitoringRoute: typeof MonitoringRoute
+  SupportRoute: typeof SupportRoute
+  UsersRoute: typeof UsersRouteWithChildren
+  WalletsRoute: typeof WalletsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wallets': {
+      id: '/wallets'
+      path: '/wallets'
+      fullPath: '/wallets'
+      preLoaderRoute: typeof WalletsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-templates': {
+      id: '/email-templates'
+      path: '/email-templates'
+      fullPath: '/email-templates'
+      preLoaderRoute: typeof EmailTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ad-accounts': {
+      id: '/ad-accounts'
+      path: '/ad-accounts'
+      fullPath: '/ad-accounts'
+      preLoaderRoute: typeof AdAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +184,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/$userId': {
+      id: '/users/$userId'
+      path: '/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof UsersUserIdRouteImport
+      parentRoute: typeof UsersRoute
+    }
   }
 }
 
+interface UsersRouteChildren {
+  UsersUserIdRoute: typeof UsersUserIdRoute
+}
+
+const UsersRouteChildren: UsersRouteChildren = {
+  UsersUserIdRoute: UsersUserIdRoute,
+}
+
+const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdAccountsRoute: AdAccountsRoute,
+  EmailTemplatesRoute: EmailTemplatesRoute,
+  MonitoringRoute: MonitoringRoute,
+  SupportRoute: SupportRoute,
+  UsersRoute: UsersRouteWithChildren,
+  WalletsRoute: WalletsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
