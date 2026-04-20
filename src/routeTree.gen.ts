@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletsRouteImport } from './routes/wallets'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
@@ -29,6 +31,16 @@ const UsersRoute = UsersRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvoicesRoute = InvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdAccountsRoute = AdAccountsRouteImport.update({
@@ -50,6 +62,8 @@ const UsersUserIdRoute = UsersUserIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
+  '/invoices': typeof InvoicesRoute
+  '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
   '/wallets': typeof WalletsRoute
@@ -58,6 +72,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
+  '/invoices': typeof InvoicesRoute
+  '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
   '/wallets': typeof WalletsRoute
@@ -67,6 +83,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
+  '/invoices': typeof InvoicesRoute
+  '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
   '/wallets': typeof WalletsRoute
@@ -77,6 +95,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ad-accounts'
+    | '/invoices'
+    | '/settings'
     | '/support'
     | '/users'
     | '/wallets'
@@ -85,6 +105,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ad-accounts'
+    | '/invoices'
+    | '/settings'
     | '/support'
     | '/users'
     | '/wallets'
@@ -93,6 +115,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ad-accounts'
+    | '/invoices'
+    | '/settings'
     | '/support'
     | '/users'
     | '/wallets'
@@ -102,6 +126,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdAccountsRoute: typeof AdAccountsRoute
+  InvoicesRoute: typeof InvoicesRoute
+  SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   UsersRoute: typeof UsersRouteWithChildren
   WalletsRoute: typeof WalletsRoute
@@ -128,6 +154,20 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invoices': {
+      id: '/invoices'
+      path: '/invoices'
+      fullPath: '/invoices'
+      preLoaderRoute: typeof InvoicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ad-accounts': {
@@ -167,6 +207,8 @@ const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdAccountsRoute: AdAccountsRoute,
+  InvoicesRoute: InvoicesRoute,
+  SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   UsersRoute: UsersRouteWithChildren,
   WalletsRoute: WalletsRoute,
