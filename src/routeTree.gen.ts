@@ -12,8 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletsRouteImport } from './routes/wallets'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as SupportRouteImport } from './routes/support'
-import { Route as MonitoringRouteImport } from './routes/monitoring'
-import { Route as EmailTemplatesRouteImport } from './routes/email-templates'
 import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
@@ -31,16 +29,6 @@ const UsersRoute = UsersRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MonitoringRoute = MonitoringRouteImport.update({
-  id: '/monitoring',
-  path: '/monitoring',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EmailTemplatesRoute = EmailTemplatesRouteImport.update({
-  id: '/email-templates',
-  path: '/email-templates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdAccountsRoute = AdAccountsRouteImport.update({
@@ -62,8 +50,6 @@ const UsersUserIdRoute = UsersUserIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
-  '/email-templates': typeof EmailTemplatesRoute
-  '/monitoring': typeof MonitoringRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
   '/wallets': typeof WalletsRoute
@@ -72,8 +58,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
-  '/email-templates': typeof EmailTemplatesRoute
-  '/monitoring': typeof MonitoringRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
   '/wallets': typeof WalletsRoute
@@ -83,8 +67,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
-  '/email-templates': typeof EmailTemplatesRoute
-  '/monitoring': typeof MonitoringRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
   '/wallets': typeof WalletsRoute
@@ -95,8 +77,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ad-accounts'
-    | '/email-templates'
-    | '/monitoring'
     | '/support'
     | '/users'
     | '/wallets'
@@ -105,8 +85,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ad-accounts'
-    | '/email-templates'
-    | '/monitoring'
     | '/support'
     | '/users'
     | '/wallets'
@@ -115,8 +93,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ad-accounts'
-    | '/email-templates'
-    | '/monitoring'
     | '/support'
     | '/users'
     | '/wallets'
@@ -126,8 +102,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdAccountsRoute: typeof AdAccountsRoute
-  EmailTemplatesRoute: typeof EmailTemplatesRoute
-  MonitoringRoute: typeof MonitoringRoute
   SupportRoute: typeof SupportRoute
   UsersRoute: typeof UsersRouteWithChildren
   WalletsRoute: typeof WalletsRoute
@@ -154,20 +128,6 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/monitoring': {
-      id: '/monitoring'
-      path: '/monitoring'
-      fullPath: '/monitoring'
-      preLoaderRoute: typeof MonitoringRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/email-templates': {
-      id: '/email-templates'
-      path: '/email-templates'
-      fullPath: '/email-templates'
-      preLoaderRoute: typeof EmailTemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ad-accounts': {
@@ -207,8 +167,6 @@ const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdAccountsRoute: AdAccountsRoute,
-  EmailTemplatesRoute: EmailTemplatesRoute,
-  MonitoringRoute: MonitoringRoute,
   SupportRoute: SupportRoute,
   UsersRoute: UsersRouteWithChildren,
   WalletsRoute: WalletsRoute,
