@@ -1,38 +1,41 @@
 
-Update the `/login` card spacing by changing the spacing at the field-group level, not just the outer `GlassCard`.
+## Forgot password — handle unregistered emails
 
-1. Refine the card’s internal layout in `src/routes/login.tsx`
-   - Keep the existing centered/glass layout.
-   - Replace the current “single stack with large `space-y-*`” approach with more deliberate grouped spacing.
-   - Add a dedicated inner wrapper for the form content so spacing is controlled independently from card padding.
+Right now the form accepts any valid-looking email and always shows the success screen, regardless of whether the address exists. We'll keep that behavior (it's the secure default) but make the messaging explicit so users understand what's happening.
 
-2. Increase spacing inside each form block
-   - Email block: add more separation between label, input, and inline error text.
-   - Password block: add more separation between the top row (`Wachtwoord` + forgot link), the input, and the error text.
-   - Remember-me row: add more top margin so it no longer feels attached to the password field.
-   - Submit button: add more top margin so it reads as a distinct action area.
-   - Divider and bottom sign-up text: add more vertical space so the footer content feels separate from the form controls.
+### What changes
 
-3. Tune the exact classes that are currently too tight
-   - Increase per-block spacing from the current `space-y-1.5` patterns to larger values.
-   - Add section-specific spacing utilities such as `mt-6`, `mt-8`, or `space-y-4/5` where needed instead of relying only on one card-wide `space-y-10`.
-   - Preserve the current dark/glass visual style, icons, validation behavior, and button styling.
+**1. Update the success screen copy in `src/routes/forgot-password.tsx`**
 
-4. Verify consistency with the existing Obsidian Elite design
-   - Keep typography, muted labels, gradient CTA, and glassmorphism unchanged.
-   - Make the result feel visually aligned with the improved spacing already used on `/sign-up`, but adapted for the simpler login form.
+Replace the current "We hebben je een reset link gestuurd" / "Check je email voor de reset link" messaging with a neutral, security-conscious version that does not confirm or deny whether the email exists in our system.
 
-Technical details
-- File to update: `src/routes/login.tsx`
-- Likely change areas:
-  - `GlassCard` inner structure
-  - Email field wrapper
-  - Password field wrapper
-  - Remember-me row
-  - Submit button spacing
-  - Divider/footer spacing
-- No route or logic changes required; this is a layout-only refinement.
+- Heading: `"Check je inbox"`
+- Subtitle: `"Als er een account bestaat, ontvang je een reset link"`
+- Body inside the card:
+  - Primary line: `"Als het email adres bij ons bekend is, ontvang je binnen enkele minuten een link om je wachtwoord opnieuw in te stellen."`
+  - Secondary line: `"Geen email ontvangen? Controleer je spam folder of probeer het opnieuw met een ander adres."`
+  - Keep the "Verstuurd naar [email]" line removed (it implies the address was valid in our system).
+- Keep the green `CheckCircle2` icon and the "Terug naar inloggen" link.
 
-Expected result
-- “Email”, “Wachtwoord”, “Onthoud mij”, and “Inloggen” will no longer feel cramped.
-- The card will have clearer visual rhythm, with each block reading as its own section instead of one dense stack.
+**2. Why we are NOT checking existence against the database**
+
+This is the recommended industry-standard pattern (used by Google, GitHub, Stripe, Supabase Auth, etc.):
+
+- Returning "email not found" leaks which addresses are registered → **user enumeration attack**. An attacker can probe the form to build a list of valid customer emails for phishing/credential-stuffing.
+- The neutral message ("if an account exists…") protects user privacy while still being helpful to legitimate users.
+- When we wire this up to real Supabase Auth later, `supabase.auth.resetPasswordForEmail()` already follows this exact pattern — it always returns success regardless of whether the email exists.
+
+**3. Add a small note below the card (optional polish)**
+
+Replace the current "Beschermd door enterprise-grade encryptie." footer line on the success state with: `"Voor je veiligheid bevestigen we niet of een email adres bij ons geregistreerd is."`
+
+(Keep the original encryption line on the form state.)
+
+### Files touched
+
+- `src/routes/forgot-password.tsx` — copy changes only inside the `submitted` branch and the subtitle. No logic changes, no new dependencies, no backend calls.
+
+### Out of scope
+
+- Real Supabase Auth integration (no auth backend is wired up yet — the form is still a mock with `setTimeout`). When auth is added later, `supabase.auth.resetPasswordForEmail(email)` plugs in directly without changing this UX.
+- Rate limiting / captcha (belongs with the real auth integration).
