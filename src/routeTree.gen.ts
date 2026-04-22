@@ -9,39 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WalletsRouteImport } from './routes/wallets'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
-import { Route as UsersRouteImport } from './routes/users'
-import { Route as SupportRouteImport } from './routes/support'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SetPasswordRouteImport } from './routes/set-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as ClientRouteImport } from './routes/client'
-import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
+import { Route as PortalWalletRouteImport } from './routes/portal.wallet'
+import { Route as PortalSupportRouteImport } from './routes/portal.support'
+import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
+import { Route as PortalInvoicesRouteImport } from './routes/portal.invoices'
+import { Route as PortalDashboardRouteImport } from './routes/portal.dashboard'
+import { Route as PortalAdAccountsRouteImport } from './routes/portal.ad-accounts'
+import { Route as AgencyWalletsRouteImport } from './routes/agency.wallets'
+import { Route as AgencyUsersRouteImport } from './routes/agency.users'
+import { Route as AgencySupportRouteImport } from './routes/agency.support'
+import { Route as AgencySettingsRouteImport } from './routes/agency.settings'
+import { Route as AgencyInvoicesRouteImport } from './routes/agency.invoices'
+import { Route as AgencyDashboardRouteImport } from './routes/agency.dashboard'
+import { Route as AgencyAuditLogRouteImport } from './routes/agency.audit-log'
+import { Route as AgencyAdAccountsRouteImport } from './routes/agency.ad-accounts'
+import { Route as AgencyAccountApplicationsRouteImport } from './routes/agency.account-applications'
+import { Route as AgencyUsersUserIdRouteImport } from './routes/agency.users.$userId'
 
-const WalletsRoute = WalletsRouteImport.update({
-  id: '/wallets',
-  path: '/wallets',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsersRoute = UsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignUpRoute = SignUpRouteImport.update({
@@ -49,14 +49,14 @@ const SignUpRoute = SignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SetPasswordRoute = SetPasswordRouteImport.update({
   id: '/set-password',
   path: '/set-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -64,24 +64,9 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InvoicesRoute = InvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientRoute = ClientRouteImport.update({
-  id: '/client',
-  path: '/client',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdAccountsRoute = AdAccountsRouteImport.update({
-  id: '/ad-accounts',
-  path: '/ad-accounts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -89,137 +74,276 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsersUserIdRoute = UsersUserIdRouteImport.update({
+const PortalWalletRoute = PortalWalletRouteImport.update({
+  id: '/portal/wallet',
+  path: '/portal/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalSupportRoute = PortalSupportRouteImport.update({
+  id: '/portal/support',
+  path: '/portal/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalSettingsRoute = PortalSettingsRouteImport.update({
+  id: '/portal/settings',
+  path: '/portal/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalInvoicesRoute = PortalInvoicesRouteImport.update({
+  id: '/portal/invoices',
+  path: '/portal/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalDashboardRoute = PortalDashboardRouteImport.update({
+  id: '/portal/dashboard',
+  path: '/portal/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalAdAccountsRoute = PortalAdAccountsRouteImport.update({
+  id: '/portal/ad-accounts',
+  path: '/portal/ad-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyWalletsRoute = AgencyWalletsRouteImport.update({
+  id: '/agency/wallets',
+  path: '/agency/wallets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyUsersRoute = AgencyUsersRouteImport.update({
+  id: '/agency/users',
+  path: '/agency/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencySupportRoute = AgencySupportRouteImport.update({
+  id: '/agency/support',
+  path: '/agency/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencySettingsRoute = AgencySettingsRouteImport.update({
+  id: '/agency/settings',
+  path: '/agency/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyInvoicesRoute = AgencyInvoicesRouteImport.update({
+  id: '/agency/invoices',
+  path: '/agency/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyDashboardRoute = AgencyDashboardRouteImport.update({
+  id: '/agency/dashboard',
+  path: '/agency/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyAuditLogRoute = AgencyAuditLogRouteImport.update({
+  id: '/agency/audit-log',
+  path: '/agency/audit-log',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyAdAccountsRoute = AgencyAdAccountsRouteImport.update({
+  id: '/agency/ad-accounts',
+  path: '/agency/ad-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyAccountApplicationsRoute =
+  AgencyAccountApplicationsRouteImport.update({
+    id: '/agency/account-applications',
+    path: '/agency/account-applications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AgencyUsersUserIdRoute = AgencyUsersUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
-  getParentRoute: () => UsersRoute,
+  getParentRoute: () => AgencyUsersRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/ad-accounts': typeof AdAccountsRoute
-  '/client': typeof ClientRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/set-password': typeof SetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
-  '/support': typeof SupportRoute
-  '/users': typeof UsersRouteWithChildren
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/wallets': typeof WalletsRoute
-  '/users/$userId': typeof UsersUserIdRoute
+  '/agency/account-applications': typeof AgencyAccountApplicationsRoute
+  '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/audit-log': typeof AgencyAuditLogRoute
+  '/agency/dashboard': typeof AgencyDashboardRoute
+  '/agency/invoices': typeof AgencyInvoicesRoute
+  '/agency/settings': typeof AgencySettingsRoute
+  '/agency/support': typeof AgencySupportRoute
+  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/wallets': typeof AgencyWalletsRoute
+  '/portal/ad-accounts': typeof PortalAdAccountsRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/portal/wallet': typeof PortalWalletRoute
+  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/ad-accounts': typeof AdAccountsRoute
-  '/client': typeof ClientRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/set-password': typeof SetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
-  '/support': typeof SupportRoute
-  '/users': typeof UsersRouteWithChildren
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/wallets': typeof WalletsRoute
-  '/users/$userId': typeof UsersUserIdRoute
+  '/agency/account-applications': typeof AgencyAccountApplicationsRoute
+  '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/audit-log': typeof AgencyAuditLogRoute
+  '/agency/dashboard': typeof AgencyDashboardRoute
+  '/agency/invoices': typeof AgencyInvoicesRoute
+  '/agency/settings': typeof AgencySettingsRoute
+  '/agency/support': typeof AgencySupportRoute
+  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/wallets': typeof AgencyWalletsRoute
+  '/portal/ad-accounts': typeof PortalAdAccountsRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/portal/wallet': typeof PortalWalletRoute
+  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/ad-accounts': typeof AdAccountsRoute
-  '/client': typeof ClientRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/set-password': typeof SetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
-  '/support': typeof SupportRoute
-  '/users': typeof UsersRouteWithChildren
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/wallets': typeof WalletsRoute
-  '/users/$userId': typeof UsersUserIdRoute
+  '/agency/account-applications': typeof AgencyAccountApplicationsRoute
+  '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/audit-log': typeof AgencyAuditLogRoute
+  '/agency/dashboard': typeof AgencyDashboardRoute
+  '/agency/invoices': typeof AgencyInvoicesRoute
+  '/agency/settings': typeof AgencySettingsRoute
+  '/agency/support': typeof AgencySupportRoute
+  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/wallets': typeof AgencyWalletsRoute
+  '/portal/ad-accounts': typeof PortalAdAccountsRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/portal/wallet': typeof PortalWalletRoute
+  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/ad-accounts'
-    | '/client'
     | '/forgot-password'
-    | '/invoices'
     | '/login'
+    | '/privacy'
     | '/set-password'
-    | '/settings'
     | '/sign-up'
-    | '/support'
-    | '/users'
+    | '/terms'
     | '/verify-email'
-    | '/wallets'
-    | '/users/$userId'
+    | '/agency/account-applications'
+    | '/agency/ad-accounts'
+    | '/agency/audit-log'
+    | '/agency/dashboard'
+    | '/agency/invoices'
+    | '/agency/settings'
+    | '/agency/support'
+    | '/agency/users'
+    | '/agency/wallets'
+    | '/portal/ad-accounts'
+    | '/portal/dashboard'
+    | '/portal/invoices'
+    | '/portal/settings'
+    | '/portal/support'
+    | '/portal/wallet'
+    | '/agency/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/ad-accounts'
-    | '/client'
     | '/forgot-password'
-    | '/invoices'
     | '/login'
+    | '/privacy'
     | '/set-password'
-    | '/settings'
     | '/sign-up'
-    | '/support'
-    | '/users'
+    | '/terms'
     | '/verify-email'
-    | '/wallets'
-    | '/users/$userId'
+    | '/agency/account-applications'
+    | '/agency/ad-accounts'
+    | '/agency/audit-log'
+    | '/agency/dashboard'
+    | '/agency/invoices'
+    | '/agency/settings'
+    | '/agency/support'
+    | '/agency/users'
+    | '/agency/wallets'
+    | '/portal/ad-accounts'
+    | '/portal/dashboard'
+    | '/portal/invoices'
+    | '/portal/settings'
+    | '/portal/support'
+    | '/portal/wallet'
+    | '/agency/users/$userId'
   id:
     | '__root__'
     | '/'
-    | '/ad-accounts'
-    | '/client'
     | '/forgot-password'
-    | '/invoices'
     | '/login'
+    | '/privacy'
     | '/set-password'
-    | '/settings'
     | '/sign-up'
-    | '/support'
-    | '/users'
+    | '/terms'
     | '/verify-email'
-    | '/wallets'
-    | '/users/$userId'
+    | '/agency/account-applications'
+    | '/agency/ad-accounts'
+    | '/agency/audit-log'
+    | '/agency/dashboard'
+    | '/agency/invoices'
+    | '/agency/settings'
+    | '/agency/support'
+    | '/agency/users'
+    | '/agency/wallets'
+    | '/portal/ad-accounts'
+    | '/portal/dashboard'
+    | '/portal/invoices'
+    | '/portal/settings'
+    | '/portal/support'
+    | '/portal/wallet'
+    | '/agency/users/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdAccountsRoute: typeof AdAccountsRoute
-  ClientRoute: typeof ClientRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
-  InvoicesRoute: typeof InvoicesRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   SetPasswordRoute: typeof SetPasswordRoute
-  SettingsRoute: typeof SettingsRoute
   SignUpRoute: typeof SignUpRoute
-  SupportRoute: typeof SupportRoute
-  UsersRoute: typeof UsersRouteWithChildren
+  TermsRoute: typeof TermsRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
-  WalletsRoute: typeof WalletsRoute
+  AgencyAccountApplicationsRoute: typeof AgencyAccountApplicationsRoute
+  AgencyAdAccountsRoute: typeof AgencyAdAccountsRoute
+  AgencyAuditLogRoute: typeof AgencyAuditLogRoute
+  AgencyDashboardRoute: typeof AgencyDashboardRoute
+  AgencyInvoicesRoute: typeof AgencyInvoicesRoute
+  AgencySettingsRoute: typeof AgencySettingsRoute
+  AgencySupportRoute: typeof AgencySupportRoute
+  AgencyUsersRoute: typeof AgencyUsersRouteWithChildren
+  AgencyWalletsRoute: typeof AgencyWalletsRoute
+  PortalAdAccountsRoute: typeof PortalAdAccountsRoute
+  PortalDashboardRoute: typeof PortalDashboardRoute
+  PortalInvoicesRoute: typeof PortalInvoicesRoute
+  PortalSettingsRoute: typeof PortalSettingsRoute
+  PortalSupportRoute: typeof PortalSupportRoute
+  PortalWalletRoute: typeof PortalWalletRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wallets': {
-      id: '/wallets'
-      path: '/wallets'
-      fullPath: '/wallets'
-      preLoaderRoute: typeof WalletsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/verify-email': {
       id: '/verify-email'
       path: '/verify-email'
@@ -227,18 +351,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up': {
@@ -248,18 +365,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/set-password': {
       id: '/set-password'
       path: '/set-password'
       fullPath: '/set-password'
       preLoaderRoute: typeof SetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -269,32 +386,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invoices': {
-      id: '/invoices'
-      path: '/invoices'
-      fullPath: '/invoices'
-      preLoaderRoute: typeof InvoicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client': {
-      id: '/client'
-      path: '/client'
-      fullPath: '/client'
-      preLoaderRoute: typeof ClientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ad-accounts': {
-      id: '/ad-accounts'
-      path: '/ad-accounts'
-      fullPath: '/ad-accounts'
-      preLoaderRoute: typeof AdAccountsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -304,40 +400,157 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/users/$userId': {
-      id: '/users/$userId'
+    '/portal/wallet': {
+      id: '/portal/wallet'
+      path: '/portal/wallet'
+      fullPath: '/portal/wallet'
+      preLoaderRoute: typeof PortalWalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/support': {
+      id: '/portal/support'
+      path: '/portal/support'
+      fullPath: '/portal/support'
+      preLoaderRoute: typeof PortalSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/settings': {
+      id: '/portal/settings'
+      path: '/portal/settings'
+      fullPath: '/portal/settings'
+      preLoaderRoute: typeof PortalSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/invoices': {
+      id: '/portal/invoices'
+      path: '/portal/invoices'
+      fullPath: '/portal/invoices'
+      preLoaderRoute: typeof PortalInvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/dashboard': {
+      id: '/portal/dashboard'
+      path: '/portal/dashboard'
+      fullPath: '/portal/dashboard'
+      preLoaderRoute: typeof PortalDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/ad-accounts': {
+      id: '/portal/ad-accounts'
+      path: '/portal/ad-accounts'
+      fullPath: '/portal/ad-accounts'
+      preLoaderRoute: typeof PortalAdAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/wallets': {
+      id: '/agency/wallets'
+      path: '/agency/wallets'
+      fullPath: '/agency/wallets'
+      preLoaderRoute: typeof AgencyWalletsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/users': {
+      id: '/agency/users'
+      path: '/agency/users'
+      fullPath: '/agency/users'
+      preLoaderRoute: typeof AgencyUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/support': {
+      id: '/agency/support'
+      path: '/agency/support'
+      fullPath: '/agency/support'
+      preLoaderRoute: typeof AgencySupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/settings': {
+      id: '/agency/settings'
+      path: '/agency/settings'
+      fullPath: '/agency/settings'
+      preLoaderRoute: typeof AgencySettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/invoices': {
+      id: '/agency/invoices'
+      path: '/agency/invoices'
+      fullPath: '/agency/invoices'
+      preLoaderRoute: typeof AgencyInvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/dashboard': {
+      id: '/agency/dashboard'
+      path: '/agency/dashboard'
+      fullPath: '/agency/dashboard'
+      preLoaderRoute: typeof AgencyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/audit-log': {
+      id: '/agency/audit-log'
+      path: '/agency/audit-log'
+      fullPath: '/agency/audit-log'
+      preLoaderRoute: typeof AgencyAuditLogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/ad-accounts': {
+      id: '/agency/ad-accounts'
+      path: '/agency/ad-accounts'
+      fullPath: '/agency/ad-accounts'
+      preLoaderRoute: typeof AgencyAdAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/account-applications': {
+      id: '/agency/account-applications'
+      path: '/agency/account-applications'
+      fullPath: '/agency/account-applications'
+      preLoaderRoute: typeof AgencyAccountApplicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/users/$userId': {
+      id: '/agency/users/$userId'
       path: '/$userId'
-      fullPath: '/users/$userId'
-      preLoaderRoute: typeof UsersUserIdRouteImport
-      parentRoute: typeof UsersRoute
+      fullPath: '/agency/users/$userId'
+      preLoaderRoute: typeof AgencyUsersUserIdRouteImport
+      parentRoute: typeof AgencyUsersRoute
     }
   }
 }
 
-interface UsersRouteChildren {
-  UsersUserIdRoute: typeof UsersUserIdRoute
+interface AgencyUsersRouteChildren {
+  AgencyUsersUserIdRoute: typeof AgencyUsersUserIdRoute
 }
 
-const UsersRouteChildren: UsersRouteChildren = {
-  UsersUserIdRoute: UsersUserIdRoute,
+const AgencyUsersRouteChildren: AgencyUsersRouteChildren = {
+  AgencyUsersUserIdRoute: AgencyUsersUserIdRoute,
 }
 
-const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
+const AgencyUsersRouteWithChildren = AgencyUsersRoute._addFileChildren(
+  AgencyUsersRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdAccountsRoute: AdAccountsRoute,
-  ClientRoute: ClientRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
-  InvoicesRoute: InvoicesRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   SetPasswordRoute: SetPasswordRoute,
-  SettingsRoute: SettingsRoute,
   SignUpRoute: SignUpRoute,
-  SupportRoute: SupportRoute,
-  UsersRoute: UsersRouteWithChildren,
+  TermsRoute: TermsRoute,
   VerifyEmailRoute: VerifyEmailRoute,
-  WalletsRoute: WalletsRoute,
+  AgencyAccountApplicationsRoute: AgencyAccountApplicationsRoute,
+  AgencyAdAccountsRoute: AgencyAdAccountsRoute,
+  AgencyAuditLogRoute: AgencyAuditLogRoute,
+  AgencyDashboardRoute: AgencyDashboardRoute,
+  AgencyInvoicesRoute: AgencyInvoicesRoute,
+  AgencySettingsRoute: AgencySettingsRoute,
+  AgencySupportRoute: AgencySupportRoute,
+  AgencyUsersRoute: AgencyUsersRouteWithChildren,
+  AgencyWalletsRoute: AgencyWalletsRoute,
+  PortalAdAccountsRoute: PortalAdAccountsRoute,
+  PortalDashboardRoute: PortalDashboardRoute,
+  PortalInvoicesRoute: PortalInvoicesRoute,
+  PortalSettingsRoute: PortalSettingsRoute,
+  PortalSupportRoute: PortalSupportRoute,
+  PortalWalletRoute: PortalWalletRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

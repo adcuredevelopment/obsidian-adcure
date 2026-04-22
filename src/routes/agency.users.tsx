@@ -5,7 +5,7 @@ import { StatusPill, statusToVariant } from "@/components/StatusPill";
 import { clients } from "@/lib/mock-data";
 import { Search, UserPlus, Mail, Wallet } from "lucide-react";
 
-export const Route = createFileRoute("/users")({
+export const Route = createFileRoute("/agency/users")({
   head: () => ({
     meta: [
       { title: "Users — Adcure Agency" },
@@ -43,7 +43,7 @@ function UsersPage() {
           {clients.map((c) => (
             <Link
               key={c.id}
-              to="/users/$userId"
+              to="/agency/users/$userId"
               params={{ userId: c.id }}
               className="group block"
             >

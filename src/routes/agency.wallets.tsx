@@ -3,7 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { Wallet, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 
-export const Route = createFileRoute("/wallets")({
+export const Route = createFileRoute("/agency/wallets")({
   head: () => ({ meta: [{ title: "Wallets — Adcure Agency" }] }),
   component: WalletsPage,
 });

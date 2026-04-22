@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/invoices")({
+export const Route = createFileRoute("/agency/invoices")({
   head: () => ({
     meta: [
       { title: "Invoices — Adcure Agency" },

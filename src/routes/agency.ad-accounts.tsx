@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/ad-accounts")({
+export const Route = createFileRoute("/agency/ad-accounts")({
   head: () => ({
     meta: [
       { title: "Ad Accounts — Adcure Agency" },

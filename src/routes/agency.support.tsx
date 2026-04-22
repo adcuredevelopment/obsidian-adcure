@@ -3,7 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { LifeBuoy } from "lucide-react";
 
-export const Route = createFileRoute("/support")({
+export const Route = createFileRoute("/agency/support")({
   head: () => ({ meta: [{ title: "Support — Adcure Agency" }] }),
   component: () => (
     <AppShell>
