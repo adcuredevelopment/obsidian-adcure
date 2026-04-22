@@ -13,6 +13,7 @@ import {
   FileText,
   UserPlus,
   ClipboardList,
+  Activity,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -51,6 +52,7 @@ const managementNav: NavItem[] = [
     badge: "1",
     badgeTone: "danger",
   },
+  { to: "/agency/system-health", label: "System Health", icon: Activity },
 ];
 
 export function AgencySidebar() {

@@ -25,6 +25,7 @@ import { Route as PortalDashboardRouteImport } from './routes/portal.dashboard'
 import { Route as PortalAdAccountsRouteImport } from './routes/portal.ad-accounts'
 import { Route as AgencyWalletsRouteImport } from './routes/agency.wallets'
 import { Route as AgencyUsersRouteImport } from './routes/agency.users'
+import { Route as AgencySystemHealthRouteImport } from './routes/agency.system-health'
 import { Route as AgencySupportRouteImport } from './routes/agency.support'
 import { Route as AgencySettingsRouteImport } from './routes/agency.settings'
 import { Route as AgencyInvoicesRouteImport } from './routes/agency.invoices'
@@ -114,6 +115,11 @@ const AgencyUsersRoute = AgencyUsersRouteImport.update({
   path: '/agency/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgencySystemHealthRoute = AgencySystemHealthRouteImport.update({
+  id: '/agency/system-health',
+  path: '/agency/system-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgencySupportRoute = AgencySupportRouteImport.update({
   id: '/agency/support',
   path: '/agency/support',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/agency/invoices': typeof AgencyInvoicesRoute
   '/agency/settings': typeof AgencySettingsRoute
   '/agency/support': typeof AgencySupportRoute
+  '/agency/system-health': typeof AgencySystemHealthRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
   '/portal/ad-accounts': typeof PortalAdAccountsRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/agency/invoices': typeof AgencyInvoicesRoute
   '/agency/settings': typeof AgencySettingsRoute
   '/agency/support': typeof AgencySupportRoute
+  '/agency/system-health': typeof AgencySystemHealthRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
   '/portal/ad-accounts': typeof PortalAdAccountsRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/agency/invoices': typeof AgencyInvoicesRoute
   '/agency/settings': typeof AgencySettingsRoute
   '/agency/support': typeof AgencySupportRoute
+  '/agency/system-health': typeof AgencySystemHealthRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
   '/portal/ad-accounts': typeof PortalAdAccountsRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/agency/invoices'
     | '/agency/settings'
     | '/agency/support'
+    | '/agency/system-health'
     | '/agency/users'
     | '/agency/wallets'
     | '/portal/ad-accounts'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/agency/invoices'
     | '/agency/settings'
     | '/agency/support'
+    | '/agency/system-health'
     | '/agency/users'
     | '/agency/wallets'
     | '/portal/ad-accounts'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/agency/invoices'
     | '/agency/settings'
     | '/agency/support'
+    | '/agency/system-health'
     | '/agency/users'
     | '/agency/wallets'
     | '/portal/ad-accounts'
@@ -332,6 +344,7 @@ export interface RootRouteChildren {
   AgencyInvoicesRoute: typeof AgencyInvoicesRoute
   AgencySettingsRoute: typeof AgencySettingsRoute
   AgencySupportRoute: typeof AgencySupportRoute
+  AgencySystemHealthRoute: typeof AgencySystemHealthRoute
   AgencyUsersRoute: typeof AgencyUsersRouteWithChildren
   AgencyWalletsRoute: typeof AgencyWalletsRoute
   PortalAdAccountsRoute: typeof PortalAdAccountsRoute
@@ -456,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencyUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agency/system-health': {
+      id: '/agency/system-health'
+      path: '/agency/system-health'
+      fullPath: '/agency/system-health'
+      preLoaderRoute: typeof AgencySystemHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agency/support': {
       id: '/agency/support'
       path: '/agency/support'
@@ -543,6 +563,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgencyInvoicesRoute: AgencyInvoicesRoute,
   AgencySettingsRoute: AgencySettingsRoute,
   AgencySupportRoute: AgencySupportRoute,
+  AgencySystemHealthRoute: AgencySystemHealthRoute,
   AgencyUsersRoute: AgencyUsersRouteWithChildren,
   AgencyWalletsRoute: AgencyWalletsRoute,
   PortalAdAccountsRoute: PortalAdAccountsRoute,
