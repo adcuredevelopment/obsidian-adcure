@@ -9,20 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WalletsRouteImport } from './routes/wallets'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
-import { Route as UsersRouteImport } from './routes/users'
-import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SetPasswordRouteImport } from './routes/set-password'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as ClientRouteImport } from './routes/client'
-import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
 import { Route as AgencyWalletsRouteImport } from './routes/agency.wallets'
 import { Route as AgencyUsersRouteImport } from './routes/agency.users'
 import { Route as AgencySupportRouteImport } from './routes/agency.support'
@@ -32,34 +23,14 @@ import { Route as AgencyDashboardRouteImport } from './routes/agency.dashboard'
 import { Route as AgencyAdAccountsRouteImport } from './routes/agency.ad-accounts'
 import { Route as AgencyUsersUserIdRouteImport } from './routes/agency.users.$userId'
 
-const WalletsRoute = WalletsRouteImport.update({
-  id: '/wallets',
-  path: '/wallets',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsersRoute = UsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SetPasswordRoute = SetPasswordRouteImport.update({
@@ -72,35 +43,10 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InvoicesRoute = InvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ClientRoute = ClientRouteImport.update({
-  id: '/client',
-  path: '/client',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdAccountsRoute = AdAccountsRouteImport.update({
-  id: '/ad-accounts',
-  path: '/ad-accounts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UsersUserIdRoute = UsersUserIdRouteImport.update({
-  id: '/$userId',
-  path: '/$userId',
-  getParentRoute: () => UsersRoute,
 } as any)
 const AgencyWalletsRoute = AgencyWalletsRouteImport.update({
   id: '/agency/wallets',
@@ -144,19 +90,11 @@ const AgencyUsersUserIdRoute = AgencyUsersUserIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/ad-accounts': typeof AdAccountsRoute
-  '/client': typeof ClientRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
   '/set-password': typeof SetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
-  '/support': typeof SupportRoute
-  '/users': typeof UsersRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
-  '/wallets': typeof WalletsRoute
   '/agency/ad-accounts': typeof AgencyAdAccountsRoute
   '/agency/dashboard': typeof AgencyDashboardRoute
   '/agency/invoices': typeof AgencyInvoicesRoute
@@ -164,23 +102,14 @@ export interface FileRoutesByFullPath {
   '/agency/support': typeof AgencySupportRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
-  '/users/$userId': typeof UsersUserIdRoute
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/ad-accounts': typeof AdAccountsRoute
-  '/client': typeof ClientRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
   '/set-password': typeof SetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
-  '/support': typeof SupportRoute
-  '/users': typeof UsersRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
-  '/wallets': typeof WalletsRoute
   '/agency/ad-accounts': typeof AgencyAdAccountsRoute
   '/agency/dashboard': typeof AgencyDashboardRoute
   '/agency/invoices': typeof AgencyInvoicesRoute
@@ -188,24 +117,15 @@ export interface FileRoutesByTo {
   '/agency/support': typeof AgencySupportRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
-  '/users/$userId': typeof UsersUserIdRoute
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/ad-accounts': typeof AdAccountsRoute
-  '/client': typeof ClientRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
   '/set-password': typeof SetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
-  '/support': typeof SupportRoute
-  '/users': typeof UsersRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
-  '/wallets': typeof WalletsRoute
   '/agency/ad-accounts': typeof AgencyAdAccountsRoute
   '/agency/dashboard': typeof AgencyDashboardRoute
   '/agency/invoices': typeof AgencyInvoicesRoute
@@ -213,25 +133,16 @@ export interface FileRoutesById {
   '/agency/support': typeof AgencySupportRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
-  '/users/$userId': typeof UsersUserIdRoute
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/ad-accounts'
-    | '/client'
     | '/forgot-password'
-    | '/invoices'
     | '/login'
     | '/set-password'
-    | '/settings'
     | '/sign-up'
-    | '/support'
-    | '/users'
     | '/verify-email'
-    | '/wallets'
     | '/agency/ad-accounts'
     | '/agency/dashboard'
     | '/agency/invoices'
@@ -239,23 +150,14 @@ export interface FileRouteTypes {
     | '/agency/support'
     | '/agency/users'
     | '/agency/wallets'
-    | '/users/$userId'
     | '/agency/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/ad-accounts'
-    | '/client'
     | '/forgot-password'
-    | '/invoices'
     | '/login'
     | '/set-password'
-    | '/settings'
     | '/sign-up'
-    | '/support'
-    | '/users'
     | '/verify-email'
-    | '/wallets'
     | '/agency/ad-accounts'
     | '/agency/dashboard'
     | '/agency/invoices'
@@ -263,23 +165,14 @@ export interface FileRouteTypes {
     | '/agency/support'
     | '/agency/users'
     | '/agency/wallets'
-    | '/users/$userId'
     | '/agency/users/$userId'
   id:
     | '__root__'
-    | '/'
-    | '/ad-accounts'
-    | '/client'
     | '/forgot-password'
-    | '/invoices'
     | '/login'
     | '/set-password'
-    | '/settings'
     | '/sign-up'
-    | '/support'
-    | '/users'
     | '/verify-email'
-    | '/wallets'
     | '/agency/ad-accounts'
     | '/agency/dashboard'
     | '/agency/invoices'
@@ -287,24 +180,15 @@ export interface FileRouteTypes {
     | '/agency/support'
     | '/agency/users'
     | '/agency/wallets'
-    | '/users/$userId'
     | '/agency/users/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AdAccountsRoute: typeof AdAccountsRoute
-  ClientRoute: typeof ClientRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
-  InvoicesRoute: typeof InvoicesRoute
   LoginRoute: typeof LoginRoute
   SetPasswordRoute: typeof SetPasswordRoute
-  SettingsRoute: typeof SettingsRoute
   SignUpRoute: typeof SignUpRoute
-  SupportRoute: typeof SupportRoute
-  UsersRoute: typeof UsersRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
-  WalletsRoute: typeof WalletsRoute
   AgencyAdAccountsRoute: typeof AgencyAdAccountsRoute
   AgencyDashboardRoute: typeof AgencyDashboardRoute
   AgencyInvoicesRoute: typeof AgencyInvoicesRoute
@@ -316,13 +200,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wallets': {
-      id: '/wallets'
-      path: '/wallets'
-      fullPath: '/wallets'
-      preLoaderRoute: typeof WalletsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/verify-email': {
       id: '/verify-email'
       path: '/verify-email'
@@ -330,32 +207,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sign-up': {
       id: '/sign-up'
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof SignUpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/set-password': {
@@ -372,47 +228,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invoices': {
-      id: '/invoices'
-      path: '/invoices'
-      fullPath: '/invoices'
-      preLoaderRoute: typeof InvoicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/client': {
-      id: '/client'
-      path: '/client'
-      fullPath: '/client'
-      preLoaderRoute: typeof ClientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ad-accounts': {
-      id: '/ad-accounts'
-      path: '/ad-accounts'
-      fullPath: '/ad-accounts'
-      preLoaderRoute: typeof AdAccountsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/users/$userId': {
-      id: '/users/$userId'
-      path: '/$userId'
-      fullPath: '/users/$userId'
-      preLoaderRoute: typeof UsersUserIdRouteImport
-      parentRoute: typeof UsersRoute
     }
     '/agency/wallets': {
       id: '/agency/wallets'
@@ -473,16 +294,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface UsersRouteChildren {
-  UsersUserIdRoute: typeof UsersUserIdRoute
-}
-
-const UsersRouteChildren: UsersRouteChildren = {
-  UsersUserIdRoute: UsersUserIdRoute,
-}
-
-const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
-
 interface AgencyUsersRouteChildren {
   AgencyUsersUserIdRoute: typeof AgencyUsersUserIdRoute
 }
@@ -496,19 +307,11 @@ const AgencyUsersRouteWithChildren = AgencyUsersRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AdAccountsRoute: AdAccountsRoute,
-  ClientRoute: ClientRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
-  InvoicesRoute: InvoicesRoute,
   LoginRoute: LoginRoute,
   SetPasswordRoute: SetPasswordRoute,
-  SettingsRoute: SettingsRoute,
   SignUpRoute: SignUpRoute,
-  SupportRoute: SupportRoute,
-  UsersRoute: UsersRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
-  WalletsRoute: WalletsRoute,
   AgencyAdAccountsRoute: AgencyAdAccountsRoute,
   AgencyDashboardRoute: AgencyDashboardRoute,
   AgencyInvoicesRoute: AgencyInvoicesRoute,
