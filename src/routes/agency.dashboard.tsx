@@ -1,5 +1,5 @@
 import { requireRole } from "@/lib/auth-mock";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { KpiCard } from "@/components/KpiCard";
@@ -17,8 +17,14 @@ import {
   Clock,
   AlertTriangle,
   ArrowUpRight,
+  Bell,
+  ShieldAlert,
+  ListChecks,
+  RefreshCw,
+  ArrowRight,
+  ClipboardCheck,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -36,6 +42,47 @@ import {
   recentActivity,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+
+type CriticalAlert = {
+  id: string;
+  title: string;
+  meta: string;
+  time: string;
+  severity: "error" | "warning";
+  href: "/agency/wallets" | "/agency/account-applications" | "/agency/system-health";
+};
+
+const CRITICAL_ALERTS: CriticalAlert[] = [
+  {
+    id: "a1",
+    title: "Wallet mismatch detected",
+    meta: "Northwind Performance · €482 variance",
+    time: "4m",
+    severity: "error",
+    href: "/agency/wallets",
+  },
+  {
+    id: "a2",
+    title: "Top-up failed at supplier",
+    meta: "Atlas DTC — EU · TikTok",
+    time: "22m",
+    severity: "error",
+    href: "/agency/account-applications",
+  },
+  {
+    id: "a3",
+    title: "Supplier sync delayed",
+    meta: "Last sync 38m ago (target ≤15m)",
+    time: "38m",
+    severity: "warning",
+    href: "/agency/system-health",
+  },
+];
+
+const PENDING_ACCOUNT_REQUESTS = 4;
+const PENDING_TOPUPS = 7;
+const PENDING_SIGNUPS = 2;
+const PENDING_TOTAL = PENDING_ACCOUNT_REQUESTS + PENDING_TOPUPS + PENDING_SIGNUPS;
 
 export const Route = createFileRoute("/agency/dashboard")({
   beforeLoad: () => requireRole("agency_admin"),
