@@ -10,10 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SetPasswordRouteImport } from './routes/set-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalWalletRouteImport } from './routes/portal.wallet'
 import { Route as PortalSupportRouteImport } from './routes/portal.support'
 import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
@@ -26,12 +29,19 @@ import { Route as AgencySupportRouteImport } from './routes/agency.support'
 import { Route as AgencySettingsRouteImport } from './routes/agency.settings'
 import { Route as AgencyInvoicesRouteImport } from './routes/agency.invoices'
 import { Route as AgencyDashboardRouteImport } from './routes/agency.dashboard'
+import { Route as AgencyAuditLogRouteImport } from './routes/agency.audit-log'
 import { Route as AgencyAdAccountsRouteImport } from './routes/agency.ad-accounts'
+import { Route as AgencyAccountApplicationsRouteImport } from './routes/agency.account-applications'
 import { Route as AgencyUsersUserIdRouteImport } from './routes/agency.users.$userId'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignUpRoute = SignUpRouteImport.update({
@@ -44,6 +54,11 @@ const SetPasswordRoute = SetPasswordRouteImport.update({
   path: '/set-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -52,6 +67,11 @@ const LoginRoute = LoginRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortalWalletRoute = PortalWalletRouteImport.update({
@@ -114,11 +134,22 @@ const AgencyDashboardRoute = AgencyDashboardRouteImport.update({
   path: '/agency/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgencyAuditLogRoute = AgencyAuditLogRouteImport.update({
+  id: '/agency/audit-log',
+  path: '/agency/audit-log',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgencyAdAccountsRoute = AgencyAdAccountsRouteImport.update({
   id: '/agency/ad-accounts',
   path: '/agency/ad-accounts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgencyAccountApplicationsRoute =
+  AgencyAccountApplicationsRouteImport.update({
+    id: '/agency/account-applications',
+    path: '/agency/account-applications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AgencyUsersUserIdRoute = AgencyUsersUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
@@ -126,12 +157,17 @@ const AgencyUsersUserIdRoute = AgencyUsersUserIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/set-password': typeof SetPasswordRoute
   '/sign-up': typeof SignUpRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/agency/account-applications': typeof AgencyAccountApplicationsRoute
   '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/audit-log': typeof AgencyAuditLogRoute
   '/agency/dashboard': typeof AgencyDashboardRoute
   '/agency/invoices': typeof AgencyInvoicesRoute
   '/agency/settings': typeof AgencySettingsRoute
@@ -147,12 +183,17 @@ export interface FileRoutesByFullPath {
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/set-password': typeof SetPasswordRoute
   '/sign-up': typeof SignUpRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/agency/account-applications': typeof AgencyAccountApplicationsRoute
   '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/audit-log': typeof AgencyAuditLogRoute
   '/agency/dashboard': typeof AgencyDashboardRoute
   '/agency/invoices': typeof AgencyInvoicesRoute
   '/agency/settings': typeof AgencySettingsRoute
@@ -169,12 +210,17 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/set-password': typeof SetPasswordRoute
   '/sign-up': typeof SignUpRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/agency/account-applications': typeof AgencyAccountApplicationsRoute
   '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/audit-log': typeof AgencyAuditLogRoute
   '/agency/dashboard': typeof AgencyDashboardRoute
   '/agency/invoices': typeof AgencyInvoicesRoute
   '/agency/settings': typeof AgencySettingsRoute
@@ -192,12 +238,17 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/forgot-password'
     | '/login'
+    | '/privacy'
     | '/set-password'
     | '/sign-up'
+    | '/terms'
     | '/verify-email'
+    | '/agency/account-applications'
     | '/agency/ad-accounts'
+    | '/agency/audit-log'
     | '/agency/dashboard'
     | '/agency/invoices'
     | '/agency/settings'
@@ -213,12 +264,17 @@ export interface FileRouteTypes {
     | '/agency/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/forgot-password'
     | '/login'
+    | '/privacy'
     | '/set-password'
     | '/sign-up'
+    | '/terms'
     | '/verify-email'
+    | '/agency/account-applications'
     | '/agency/ad-accounts'
+    | '/agency/audit-log'
     | '/agency/dashboard'
     | '/agency/invoices'
     | '/agency/settings'
@@ -234,12 +290,17 @@ export interface FileRouteTypes {
     | '/agency/users/$userId'
   id:
     | '__root__'
+    | '/'
     | '/forgot-password'
     | '/login'
+    | '/privacy'
     | '/set-password'
     | '/sign-up'
+    | '/terms'
     | '/verify-email'
+    | '/agency/account-applications'
     | '/agency/ad-accounts'
+    | '/agency/audit-log'
     | '/agency/dashboard'
     | '/agency/invoices'
     | '/agency/settings'
@@ -256,12 +317,17 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   SetPasswordRoute: typeof SetPasswordRoute
   SignUpRoute: typeof SignUpRoute
+  TermsRoute: typeof TermsRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  AgencyAccountApplicationsRoute: typeof AgencyAccountApplicationsRoute
   AgencyAdAccountsRoute: typeof AgencyAdAccountsRoute
+  AgencyAuditLogRoute: typeof AgencyAuditLogRoute
   AgencyDashboardRoute: typeof AgencyDashboardRoute
   AgencyInvoicesRoute: typeof AgencyInvoicesRoute
   AgencySettingsRoute: typeof AgencySettingsRoute
@@ -285,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-up': {
       id: '/sign-up'
       path: '/sign-up'
@@ -299,6 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -311,6 +391,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portal/wallet': {
@@ -397,11 +484,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencyDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agency/audit-log': {
+      id: '/agency/audit-log'
+      path: '/agency/audit-log'
+      fullPath: '/agency/audit-log'
+      preLoaderRoute: typeof AgencyAuditLogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agency/ad-accounts': {
       id: '/agency/ad-accounts'
       path: '/agency/ad-accounts'
       fullPath: '/agency/ad-accounts'
       preLoaderRoute: typeof AgencyAdAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/account-applications': {
+      id: '/agency/account-applications'
+      path: '/agency/account-applications'
+      fullPath: '/agency/account-applications'
+      preLoaderRoute: typeof AgencyAccountApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agency/users/$userId': {
@@ -427,12 +528,17 @@ const AgencyUsersRouteWithChildren = AgencyUsersRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   SetPasswordRoute: SetPasswordRoute,
   SignUpRoute: SignUpRoute,
+  TermsRoute: TermsRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  AgencyAccountApplicationsRoute: AgencyAccountApplicationsRoute,
   AgencyAdAccountsRoute: AgencyAdAccountsRoute,
+  AgencyAuditLogRoute: AgencyAuditLogRoute,
   AgencyDashboardRoute: AgencyDashboardRoute,
   AgencyInvoicesRoute: AgencyInvoicesRoute,
   AgencySettingsRoute: AgencySettingsRoute,
