@@ -7,6 +7,7 @@
  * switchRole, useRole) can stay the same.
  */
 import { useSyncExternalStore } from "react";
+import { redirect } from "@tanstack/react-router";
 
 export type Role = "agency_admin" | "client" | "public";
 
@@ -66,9 +67,12 @@ export function dashboardPathForRole(role: Role): string {
  * Usage inside a route file:
  *   beforeLoad: () => requireRole("agency_admin"),
  */
-import { redirect } from "@tanstack/react-router";
-
 export function requireRole(required: Role): void {
+  const role = getCurrentRole();
+  if (role !== required) {
+    throw redirect({ to: "/login" });
+  }
+}
   const role = getCurrentRole();
   if (role !== required) {
     throw redirect({ to: "/login" });
