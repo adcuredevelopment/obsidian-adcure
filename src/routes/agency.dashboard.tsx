@@ -474,3 +474,197 @@ function RecentActivity() {
     </GlassCard>
   );
 }
+
+function CriticalAlertsBell({ alerts }: { alerts: CriticalAlert[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const count = alerts.length;
+  const hasErrors = alerts.some((a) => a.severity === "error");
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className={cn(
+          "relative inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition",
+          count > 0 && hasErrors
+            ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/15"
+            : count > 0
+              ? "border-warning/40 bg-warning/10 text-warning hover:bg-warning/15"
+              : "border-border bg-card text-foreground hover:border-border-strong hover:bg-accent",
+        )}
+      >
+        <Bell className="h-4 w-4" />
+        Critical Alerts
+        {count > 0 && (
+          <span
+            className={cn(
+              "ml-0.5 inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold leading-none",
+              hasErrors
+                ? "bg-destructive text-destructive-foreground"
+                : "bg-warning text-warning-foreground",
+            )}
+          >
+            {count}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-40 mt-2 w-[360px] origin-top-right rounded-xl border border-border bg-popover shadow-elegant animate-fade-in"
+        >
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <p className="text-sm font-semibold">Critical Alerts</p>
+            <span className="text-[11px] text-muted-foreground">{count} active</span>
+          </div>
+          <ul className="max-h-[320px] overflow-y-auto p-2">
+            {alerts.length === 0 ? (
+              <li className="p-4 text-center text-xs text-muted-foreground">
+                Nothing to worry about — all systems healthy.
+              </li>
+            ) : (
+              alerts.map((a) => (
+                <li key={a.id}>
+                  <Link
+                    to={a.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-start gap-3 rounded-lg p-2.5 transition hover:bg-background/60"
+                  >
+                    <div
+                      className={cn(
+                        "mt-0.5 rounded-lg p-1.5 ring-1 ring-inset",
+                        a.severity === "error"
+                          ? "bg-destructive/15 text-destructive ring-destructive/25"
+                          : "bg-warning/15 text-warning ring-warning/25",
+                      )}
+                    >
+                      <AlertTriangle className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{a.title}</p>
+                      <p className="truncate text-xs text-muted-foreground">{a.meta}</p>
+                    </div>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">{a.time}</span>
+                  </Link>
+                </li>
+              ))
+            )}
+          </ul>
+          <div className="border-t border-border px-4 py-2 text-right">
+            <Link
+              to="/agency/system-health"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary-glow hover:text-primary"
+            >
+              View system health <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PendingApprovalsCard() {
+  return (
+    <Link
+      to="/agency/account-applications"
+      className="group block rounded-2xl border border-border bg-card/80 p-5 shadow-card backdrop-blur-xl transition hover:border-border-strong hover:bg-card"
+    >
+      <div className="flex items-center justify-between">
+        <div className="rounded-lg bg-warning/15 p-2 text-warning ring-1 ring-inset ring-warning/25">
+          <ListChecks className="h-4 w-4" />
+        </div>
+        <ArrowUpRight className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+      </div>
+      <p className="mt-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+        Pending Approvals
+      </p>
+      <p className="mt-1 text-2xl font-semibold tabular-nums">{PENDING_TOTAL}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+        <span>{PENDING_ACCOUNT_REQUESTS} accounts</span>
+        <span className="text-border">·</span>
+        <span>{PENDING_TOPUPS} top-ups</span>
+        <span className="text-border">·</span>
+        <span>{PENDING_SIGNUPS} sign-ups</span>
+      </div>
+    </Link>
+  );
+}
+
+function TodaysSummary() {
+  const processed = 142;
+  const amount = 184320;
+  const successRate = 98.6;
+  const failed = 2;
+
+  return (
+    <GlassCard>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Today's Summary
+          </p>
+          <p className="mt-1 text-base font-semibold">Operational snapshot</p>
+        </div>
+        <Link
+          to="/agency/audit-log"
+          className="inline-flex items-center gap-1 text-xs font-medium text-primary-glow hover:text-primary"
+        >
+          View audit log <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-xl border border-border bg-background/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            Transactions
+          </p>
+          <p className="mt-1 text-lg font-semibold tabular-nums">{processed}</p>
+        </div>
+        <div className="rounded-xl border border-border bg-background/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Volume</p>
+          <p className="mt-1 text-lg font-semibold tabular-nums">
+            ${amount.toLocaleString()}
+          </p>
+        </div>
+        <div className="rounded-xl border border-border bg-background/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            Success Rate
+          </p>
+          <p className="mt-1 text-lg font-semibold tabular-nums text-success">{successRate}%</p>
+        </div>
+        <div className="rounded-xl border border-border bg-background/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Failed</p>
+          <p
+            className={cn(
+              "mt-1 text-lg font-semibold tabular-nums",
+              failed > 0 ? "text-destructive" : "text-foreground",
+            )}
+          >
+            {failed}
+          </p>
+        </div>
+      </div>
+    </GlassCard>
+  );
+}
