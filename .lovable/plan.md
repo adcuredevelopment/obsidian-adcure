@@ -1,41 +1,43 @@
 
-## Forgot password — handle unregistered emails
 
-Right now the form accepts any valid-looking email and always shows the success screen, regardless of whether the address exists. We'll keep that behavior (it's the secure default) but make the messaging explicit so users understand what's happening.
+## Remove Native Number Spinner Arrows
 
-### What changes
+You spotted the small up/down arrows inside the "Top-up amount" input — those are the browser's default number spinner controls. They don't fit the dark Obsidian aesthetic.
 
-**1. Update the success screen copy in `src/routes/forgot-password.tsx`**
+### Approach
 
-Replace the current "We hebben je een reset link gestuurd" / "Check je email voor de reset link" messaging with a neutral, security-conscious version that does not confirm or deny whether the email exists in our system.
+The cleanest fix is to **hide the native spinner globally via CSS**, so every `type="number"` input across the app (top-up modals on ad accounts, wallet, and any future ones) stays consistent. Quick increment/decrement is already covered by the quick-amount preset buttons (€100, €500, €1000, €5000), so removing the spinner doesn't take away functionality.
 
-- Heading: `"Check je inbox"`
-- Subtitle: `"Als er een account bestaat, ontvang je een reset link"`
-- Body inside the card:
-  - Primary line: `"Als het email adres bij ons bekend is, ontvang je binnen enkele minuten een link om je wachtwoord opnieuw in te stellen."`
-  - Secondary line: `"Geen email ontvangen? Controleer je spam folder of probeer het opnieuw met een ander adres."`
-  - Keep the "Verstuurd naar [email]" line removed (it implies the address was valid in our system).
-- Keep the green `CheckCircle2` icon and the "Terug naar inloggen" link.
+### Changes
 
-**2. Why we are NOT checking existence against the database**
+**1. `src/styles.css`** — Add a small utility block at the bottom that strips the spinner in all browsers:
 
-This is the recommended industry-standard pattern (used by Google, GitHub, Stripe, Supabase Auth, etc.):
+```css
+/* Hide native number input spinners (Obsidian aesthetic) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+```
 
-- Returning "email not found" leaks which addresses are registered → **user enumeration attack**. An attacker can probe the form to build a list of valid customer emails for phishing/credential-stuffing.
-- The neutral message ("if an account exists…") protects user privacy while still being helpful to legitimate users.
-- When we wire this up to real Supabase Auth later, `supabase.auth.resetPasswordForEmail()` already follows this exact pattern — it always returns success regardless of whether the email exists.
+This handles:
+- Chrome / Edge / Safari (WebKit pseudo-elements)
+- Firefox (`-moz-appearance: textfield`)
+- Standard `appearance: textfield` for forward compatibility
 
-**3. Add a small note below the card (optional polish)**
+### What stays the same
 
-Replace the current "Beschermd door enterprise-grade encryptie." footer line on the success state with: `"Voor je veiligheid bevestigen we niet of een email adres bij ons geregistreerd is."`
-
-(Keep the original encryption line on the form state.)
+- The amount input still accepts only numeric input (validation, min value, decimals all unchanged).
+- Quick-amount preset buttons remain the primary way to bump values.
+- Currency toggle (EUR / USD) is unaffected.
+- No component logic changes — pure CSS, zero risk.
 
 ### Files touched
 
-- `src/routes/forgot-password.tsx` — copy changes only inside the `submitted` branch and the subtitle. No logic changes, no new dependencies, no backend calls.
+- `src/styles.css` (append ~10 lines)
 
-### Out of scope
-
-- Real Supabase Auth integration (no auth backend is wired up yet — the form is still a mock with `setTimeout`). When auth is added later, `supabase.auth.resetPasswordForEmail(email)` plugs in directly without changing this UX.
-- Rate limiting / captcha (belongs with the real auth integration).
