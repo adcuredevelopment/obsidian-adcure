@@ -14,6 +14,12 @@ import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SetPasswordRouteImport } from './routes/set-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as PortalWalletRouteImport } from './routes/portal.wallet'
+import { Route as PortalSupportRouteImport } from './routes/portal.support'
+import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
+import { Route as PortalInvoicesRouteImport } from './routes/portal.invoices'
+import { Route as PortalDashboardRouteImport } from './routes/portal.dashboard'
+import { Route as PortalAdAccountsRouteImport } from './routes/portal.ad-accounts'
 import { Route as AgencyWalletsRouteImport } from './routes/agency.wallets'
 import { Route as AgencyUsersRouteImport } from './routes/agency.users'
 import { Route as AgencySupportRouteImport } from './routes/agency.support'
@@ -46,6 +52,36 @@ const LoginRoute = LoginRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalWalletRoute = PortalWalletRouteImport.update({
+  id: '/portal/wallet',
+  path: '/portal/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalSupportRoute = PortalSupportRouteImport.update({
+  id: '/portal/support',
+  path: '/portal/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalSettingsRoute = PortalSettingsRouteImport.update({
+  id: '/portal/settings',
+  path: '/portal/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalInvoicesRoute = PortalInvoicesRouteImport.update({
+  id: '/portal/invoices',
+  path: '/portal/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalDashboardRoute = PortalDashboardRouteImport.update({
+  id: '/portal/dashboard',
+  path: '/portal/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalAdAccountsRoute = PortalAdAccountsRouteImport.update({
+  id: '/portal/ad-accounts',
+  path: '/portal/ad-accounts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgencyWalletsRoute = AgencyWalletsRouteImport.update({
@@ -102,6 +138,12 @@ export interface FileRoutesByFullPath {
   '/agency/support': typeof AgencySupportRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
+  '/portal/ad-accounts': typeof PortalAdAccountsRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/portal/wallet': typeof PortalWalletRoute
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +159,12 @@ export interface FileRoutesByTo {
   '/agency/support': typeof AgencySupportRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
+  '/portal/ad-accounts': typeof PortalAdAccountsRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/portal/wallet': typeof PortalWalletRoute
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesById {
@@ -133,6 +181,12 @@ export interface FileRoutesById {
   '/agency/support': typeof AgencySupportRoute
   '/agency/users': typeof AgencyUsersRouteWithChildren
   '/agency/wallets': typeof AgencyWalletsRoute
+  '/portal/ad-accounts': typeof PortalAdAccountsRoute
+  '/portal/dashboard': typeof PortalDashboardRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/portal/wallet': typeof PortalWalletRoute
   '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +204,12 @@ export interface FileRouteTypes {
     | '/agency/support'
     | '/agency/users'
     | '/agency/wallets'
+    | '/portal/ad-accounts'
+    | '/portal/dashboard'
+    | '/portal/invoices'
+    | '/portal/settings'
+    | '/portal/support'
+    | '/portal/wallet'
     | '/agency/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +225,12 @@ export interface FileRouteTypes {
     | '/agency/support'
     | '/agency/users'
     | '/agency/wallets'
+    | '/portal/ad-accounts'
+    | '/portal/dashboard'
+    | '/portal/invoices'
+    | '/portal/settings'
+    | '/portal/support'
+    | '/portal/wallet'
     | '/agency/users/$userId'
   id:
     | '__root__'
@@ -180,6 +246,12 @@ export interface FileRouteTypes {
     | '/agency/support'
     | '/agency/users'
     | '/agency/wallets'
+    | '/portal/ad-accounts'
+    | '/portal/dashboard'
+    | '/portal/invoices'
+    | '/portal/settings'
+    | '/portal/support'
+    | '/portal/wallet'
     | '/agency/users/$userId'
   fileRoutesById: FileRoutesById
 }
@@ -196,6 +268,12 @@ export interface RootRouteChildren {
   AgencySupportRoute: typeof AgencySupportRoute
   AgencyUsersRoute: typeof AgencyUsersRouteWithChildren
   AgencyWalletsRoute: typeof AgencyWalletsRoute
+  PortalAdAccountsRoute: typeof PortalAdAccountsRoute
+  PortalDashboardRoute: typeof PortalDashboardRoute
+  PortalInvoicesRoute: typeof PortalInvoicesRoute
+  PortalSettingsRoute: typeof PortalSettingsRoute
+  PortalSupportRoute: typeof PortalSupportRoute
+  PortalWalletRoute: typeof PortalWalletRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -233,6 +311,48 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/wallet': {
+      id: '/portal/wallet'
+      path: '/portal/wallet'
+      fullPath: '/portal/wallet'
+      preLoaderRoute: typeof PortalWalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/support': {
+      id: '/portal/support'
+      path: '/portal/support'
+      fullPath: '/portal/support'
+      preLoaderRoute: typeof PortalSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/settings': {
+      id: '/portal/settings'
+      path: '/portal/settings'
+      fullPath: '/portal/settings'
+      preLoaderRoute: typeof PortalSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/invoices': {
+      id: '/portal/invoices'
+      path: '/portal/invoices'
+      fullPath: '/portal/invoices'
+      preLoaderRoute: typeof PortalInvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/dashboard': {
+      id: '/portal/dashboard'
+      path: '/portal/dashboard'
+      fullPath: '/portal/dashboard'
+      preLoaderRoute: typeof PortalDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/ad-accounts': {
+      id: '/portal/ad-accounts'
+      path: '/portal/ad-accounts'
+      fullPath: '/portal/ad-accounts'
+      preLoaderRoute: typeof PortalAdAccountsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agency/wallets': {
@@ -319,6 +439,12 @@ const rootRouteChildren: RootRouteChildren = {
   AgencySupportRoute: AgencySupportRoute,
   AgencyUsersRoute: AgencyUsersRouteWithChildren,
   AgencyWalletsRoute: AgencyWalletsRoute,
+  PortalAdAccountsRoute: PortalAdAccountsRoute,
+  PortalDashboardRoute: PortalDashboardRoute,
+  PortalInvoicesRoute: PortalInvoicesRoute,
+  PortalSettingsRoute: PortalSettingsRoute,
+  PortalSupportRoute: PortalSupportRoute,
+  PortalWalletRoute: PortalWalletRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

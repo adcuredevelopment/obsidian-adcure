@@ -217,8 +217,8 @@ function SignUpPage() {
               <span className="text-foreground">{values.email}</span>.
             </p>
             <Button asChild className="mt-6 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow hover:opacity-95">
-              <Link to="/">
-                Terug naar home <ArrowRight className="h-4 w-4" />
+              <Link to="/login">
+                Naar inloggen <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </GlassCard>
