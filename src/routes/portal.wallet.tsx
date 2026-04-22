@@ -18,6 +18,7 @@ import {
   FileText,
   AlertTriangle,
   CheckCircle2,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
