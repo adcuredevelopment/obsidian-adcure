@@ -304,8 +304,8 @@ function RecentTransactions({
                       t.status === "Completed"
                         ? "success"
                         : t.status === "Pending"
-                          ? "warning"
-                          : "destructive"
+                          ? "pending"
+                          : "danger"
                     }
                   >
                     {t.status}
