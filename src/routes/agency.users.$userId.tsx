@@ -1,9 +1,11 @@
 import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { StatusPill, statusToVariant } from "@/components/StatusPill";
-import { clients, adAccounts } from "@/lib/mock-data";
+import { clients, adAccounts, type Client } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
   Mail,
@@ -12,6 +14,10 @@ import {
   PauseCircle,
   Trash2,
   Building2,
+  X,
+  AlertTriangle,
+  Lock,
+  CheckCircle2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/agency/users/$userId")({
