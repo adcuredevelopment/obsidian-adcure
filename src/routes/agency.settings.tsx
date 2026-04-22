@@ -43,7 +43,7 @@ export const Route = createFileRoute("/agency/settings")({
 });
 
 function SettingsPage() {
-  const [tab, setTab] = useState<"profile" | "security">("profile");
+  const [tab, setTab] = useState<"profile" | "security" | "integrations">("profile");
 
   return (
     <AppShell>
@@ -56,10 +56,11 @@ function SettingsPage() {
         </header>
 
         {/* Tabs */}
-        <div className="grid grid-cols-2 gap-1 rounded-xl border border-border bg-card/60 p-1">
+        <div className="grid grid-cols-3 gap-1 rounded-xl border border-border bg-card/60 p-1">
           {[
             { id: "profile", label: "Profile", icon: User },
             { id: "security", label: "Security", icon: ShieldCheck },
+            { id: "integrations", label: "Integrations", icon: Plug },
           ].map((t) => {
             const Icon = t.icon;
             const active = tab === t.id;
@@ -80,7 +81,9 @@ function SettingsPage() {
           })}
         </div>
 
-        {tab === "profile" ? <ProfileTab /> : <SecurityTab />}
+        {tab === "profile" && <ProfileTab />}
+        {tab === "security" && <SecurityTab />}
+        {tab === "integrations" && <IntegrationsTab />}
       </div>
     </AppShell>
   );
