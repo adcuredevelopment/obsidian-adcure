@@ -166,12 +166,12 @@ function LoginPage() {
                 >
                   Wachtwoord
                 </label>
-                <Link
-                  to="/forgot-password"
+                <a
+                  href="/forgot-password"
                   className="text-[11px] font-medium text-muted-foreground underline-offset-4 hover:text-primary-glow hover:underline"
                 >
                   Vergeten?
-                </Link>
+                </a>
               </div>
               <div className="relative">
                 <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
