@@ -75,11 +75,11 @@ function ForgotPasswordPage() {
         {/* Heading */}
         <div className="mb-6 text-center">
           <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground">
-            {submitted ? "Check je email" : "Wachtwoord vergeten?"}
+            {submitted ? "Check je inbox" : "Wachtwoord vergeten?"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {submitted
-              ? "We hebben je een reset link gestuurd"
+              ? "Als er een account bestaat, ontvang je een reset link"
               : "Vul je email in en we sturen je een reset link"}
           </p>
         </div>
@@ -90,11 +90,13 @@ function ForgotPasswordPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <CheckCircle2 className="h-6 w-6 text-primary-glow" />
               </div>
-              <p className="mt-5 text-sm text-foreground">
-                Check je email voor de reset link
+              <p className="mt-5 text-balance text-sm text-foreground">
+                Als het email adres bij ons bekend is, ontvang je binnen enkele
+                minuten een link om je wachtwoord opnieuw in te stellen.
               </p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Verstuurd naar <span className="text-foreground">{email}</span>
+              <p className="mt-3 text-balance text-xs text-muted-foreground">
+                Geen email ontvangen? Controleer je spam folder of probeer het
+                opnieuw met een ander adres.
               </p>
               <Link
                 to="/login"
@@ -176,8 +178,10 @@ function ForgotPasswordPage() {
           </form>
         )}
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Beschermd door enterprise-grade encryptie.
+        <p className="mt-6 text-balance text-center text-xs text-muted-foreground">
+          {submitted
+            ? "Voor je veiligheid bevestigen we niet of een email adres bij ons geregistreerd is."
+            : "Beschermd door enterprise-grade encryptie."}
         </p>
       </div>
     </div>
