@@ -158,7 +158,7 @@ function LoginPage() {
             </div>
 
             {/* Password */}
-            <div className="space-y-1.5">
+            <div className="mt-8 space-y-3">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
