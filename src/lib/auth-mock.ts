@@ -73,11 +73,6 @@ export function requireRole(required: Role): void {
     throw redirect({ to: "/login" });
   }
 }
-  const role = getCurrentRole();
-  if (role !== required) {
-    throw redirect({ to: "/login" });
-  }
-}
 
 export const ROLE_LABELS: Record<Role, string> = {
   agency_admin: "Admin",
