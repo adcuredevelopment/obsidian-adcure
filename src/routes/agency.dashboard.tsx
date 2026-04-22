@@ -121,6 +121,7 @@ function Dashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <CriticalAlertsBell alerts={CRITICAL_ALERTS} />
             <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border-strong hover:bg-accent">
               <CreditCard className="h-4 w-4" /> New Top-up
             </button>
