@@ -52,6 +52,7 @@ const managementNav: NavItem[] = [
     badge: "1",
     badgeTone: "danger",
   },
+  { to: "/agency/system-health", label: "System Health", icon: Activity },
 ];
 
 export function AgencySidebar() {
