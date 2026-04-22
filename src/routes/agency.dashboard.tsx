@@ -132,7 +132,7 @@ function Dashboard() {
         </header>
 
         {/* KPIs */}
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <KpiCard
             label="Total Clients"
             value="58"
@@ -162,6 +162,7 @@ function Dashboard() {
             icon={MessageSquare}
             accent="warning"
           />
+          <PendingApprovalsCard />
         </section>
 
         {/* Charts */}
