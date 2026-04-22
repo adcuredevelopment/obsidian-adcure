@@ -23,6 +23,14 @@ import { Route as ClientRouteImport } from './routes/client'
 import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
+import { Route as AgencyWalletsRouteImport } from './routes/agency.wallets'
+import { Route as AgencyUsersRouteImport } from './routes/agency.users'
+import { Route as AgencySupportRouteImport } from './routes/agency.support'
+import { Route as AgencySettingsRouteImport } from './routes/agency.settings'
+import { Route as AgencyInvoicesRouteImport } from './routes/agency.invoices'
+import { Route as AgencyDashboardRouteImport } from './routes/agency.dashboard'
+import { Route as AgencyAdAccountsRouteImport } from './routes/agency.ad-accounts'
+import { Route as AgencyUsersUserIdRouteImport } from './routes/agency.users.$userId'
 
 const WalletsRoute = WalletsRouteImport.update({
   id: '/wallets',
@@ -94,6 +102,46 @@ const UsersUserIdRoute = UsersUserIdRouteImport.update({
   path: '/$userId',
   getParentRoute: () => UsersRoute,
 } as any)
+const AgencyWalletsRoute = AgencyWalletsRouteImport.update({
+  id: '/agency/wallets',
+  path: '/agency/wallets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyUsersRoute = AgencyUsersRouteImport.update({
+  id: '/agency/users',
+  path: '/agency/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencySupportRoute = AgencySupportRouteImport.update({
+  id: '/agency/support',
+  path: '/agency/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencySettingsRoute = AgencySettingsRouteImport.update({
+  id: '/agency/settings',
+  path: '/agency/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyInvoicesRoute = AgencyInvoicesRouteImport.update({
+  id: '/agency/invoices',
+  path: '/agency/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyDashboardRoute = AgencyDashboardRouteImport.update({
+  id: '/agency/dashboard',
+  path: '/agency/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyAdAccountsRoute = AgencyAdAccountsRouteImport.update({
+  id: '/agency/ad-accounts',
+  path: '/agency/ad-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyUsersUserIdRoute = AgencyUsersUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
+  getParentRoute: () => AgencyUsersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,7 +157,15 @@ export interface FileRoutesByFullPath {
   '/users': typeof UsersRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/wallets': typeof WalletsRoute
+  '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/dashboard': typeof AgencyDashboardRoute
+  '/agency/invoices': typeof AgencyInvoicesRoute
+  '/agency/settings': typeof AgencySettingsRoute
+  '/agency/support': typeof AgencySupportRoute
+  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/wallets': typeof AgencyWalletsRoute
   '/users/$userId': typeof UsersUserIdRoute
+  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,7 +181,15 @@ export interface FileRoutesByTo {
   '/users': typeof UsersRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/wallets': typeof WalletsRoute
+  '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/dashboard': typeof AgencyDashboardRoute
+  '/agency/invoices': typeof AgencyInvoicesRoute
+  '/agency/settings': typeof AgencySettingsRoute
+  '/agency/support': typeof AgencySupportRoute
+  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/wallets': typeof AgencyWalletsRoute
   '/users/$userId': typeof UsersUserIdRoute
+  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,7 +206,15 @@ export interface FileRoutesById {
   '/users': typeof UsersRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/wallets': typeof WalletsRoute
+  '/agency/ad-accounts': typeof AgencyAdAccountsRoute
+  '/agency/dashboard': typeof AgencyDashboardRoute
+  '/agency/invoices': typeof AgencyInvoicesRoute
+  '/agency/settings': typeof AgencySettingsRoute
+  '/agency/support': typeof AgencySupportRoute
+  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/wallets': typeof AgencyWalletsRoute
   '/users/$userId': typeof UsersUserIdRoute
+  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,7 +232,15 @@ export interface FileRouteTypes {
     | '/users'
     | '/verify-email'
     | '/wallets'
+    | '/agency/ad-accounts'
+    | '/agency/dashboard'
+    | '/agency/invoices'
+    | '/agency/settings'
+    | '/agency/support'
+    | '/agency/users'
+    | '/agency/wallets'
     | '/users/$userId'
+    | '/agency/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -176,7 +256,15 @@ export interface FileRouteTypes {
     | '/users'
     | '/verify-email'
     | '/wallets'
+    | '/agency/ad-accounts'
+    | '/agency/dashboard'
+    | '/agency/invoices'
+    | '/agency/settings'
+    | '/agency/support'
+    | '/agency/users'
+    | '/agency/wallets'
     | '/users/$userId'
+    | '/agency/users/$userId'
   id:
     | '__root__'
     | '/'
@@ -192,7 +280,15 @@ export interface FileRouteTypes {
     | '/users'
     | '/verify-email'
     | '/wallets'
+    | '/agency/ad-accounts'
+    | '/agency/dashboard'
+    | '/agency/invoices'
+    | '/agency/settings'
+    | '/agency/support'
+    | '/agency/users'
+    | '/agency/wallets'
     | '/users/$userId'
+    | '/agency/users/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,6 +305,13 @@ export interface RootRouteChildren {
   UsersRoute: typeof UsersRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
   WalletsRoute: typeof WalletsRoute
+  AgencyAdAccountsRoute: typeof AgencyAdAccountsRoute
+  AgencyDashboardRoute: typeof AgencyDashboardRoute
+  AgencyInvoicesRoute: typeof AgencyInvoicesRoute
+  AgencySettingsRoute: typeof AgencySettingsRoute
+  AgencySupportRoute: typeof AgencySupportRoute
+  AgencyUsersRoute: typeof AgencyUsersRouteWithChildren
+  AgencyWalletsRoute: typeof AgencyWalletsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -311,6 +414,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersUserIdRouteImport
       parentRoute: typeof UsersRoute
     }
+    '/agency/wallets': {
+      id: '/agency/wallets'
+      path: '/agency/wallets'
+      fullPath: '/agency/wallets'
+      preLoaderRoute: typeof AgencyWalletsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/users': {
+      id: '/agency/users'
+      path: '/agency/users'
+      fullPath: '/agency/users'
+      preLoaderRoute: typeof AgencyUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/support': {
+      id: '/agency/support'
+      path: '/agency/support'
+      fullPath: '/agency/support'
+      preLoaderRoute: typeof AgencySupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/settings': {
+      id: '/agency/settings'
+      path: '/agency/settings'
+      fullPath: '/agency/settings'
+      preLoaderRoute: typeof AgencySettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/invoices': {
+      id: '/agency/invoices'
+      path: '/agency/invoices'
+      fullPath: '/agency/invoices'
+      preLoaderRoute: typeof AgencyInvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/dashboard': {
+      id: '/agency/dashboard'
+      path: '/agency/dashboard'
+      fullPath: '/agency/dashboard'
+      preLoaderRoute: typeof AgencyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/ad-accounts': {
+      id: '/agency/ad-accounts'
+      path: '/agency/ad-accounts'
+      fullPath: '/agency/ad-accounts'
+      preLoaderRoute: typeof AgencyAdAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/users/$userId': {
+      id: '/agency/users/$userId'
+      path: '/$userId'
+      fullPath: '/agency/users/$userId'
+      preLoaderRoute: typeof AgencyUsersUserIdRouteImport
+      parentRoute: typeof AgencyUsersRoute
+    }
   }
 }
 
@@ -323,6 +482,18 @@ const UsersRouteChildren: UsersRouteChildren = {
 }
 
 const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
+
+interface AgencyUsersRouteChildren {
+  AgencyUsersUserIdRoute: typeof AgencyUsersUserIdRoute
+}
+
+const AgencyUsersRouteChildren: AgencyUsersRouteChildren = {
+  AgencyUsersUserIdRoute: AgencyUsersUserIdRoute,
+}
+
+const AgencyUsersRouteWithChildren = AgencyUsersRoute._addFileChildren(
+  AgencyUsersRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -338,6 +509,13 @@ const rootRouteChildren: RootRouteChildren = {
   UsersRoute: UsersRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
   WalletsRoute: WalletsRoute,
+  AgencyAdAccountsRoute: AgencyAdAccountsRoute,
+  AgencyDashboardRoute: AgencyDashboardRoute,
+  AgencyInvoicesRoute: AgencyInvoicesRoute,
+  AgencySettingsRoute: AgencySettingsRoute,
+  AgencySupportRoute: AgencySupportRoute,
+  AgencyUsersRoute: AgencyUsersRouteWithChildren,
+  AgencyWalletsRoute: AgencyWalletsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

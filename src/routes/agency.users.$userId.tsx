@@ -28,7 +28,7 @@ export const Route = createFileRoute("/agency/users/$userId")({
   notFoundComponent: () => (
     <AppShell>
       <p className="text-sm text-muted-foreground">User not found.</p>
-      <Link to="/users" className="mt-2 inline-flex text-sm text-primary-glow">
+      <Link to="/agency/users" className="mt-2 inline-flex text-sm text-primary-glow">
         Back to Users
       </Link>
     </AppShell>
@@ -49,7 +49,7 @@ function UserProfile() {
     <AppShell>
       <div className="animate-fade-in space-y-6">
         <Link
-          to="/users"
+          to="/agency/users"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Users

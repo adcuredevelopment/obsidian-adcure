@@ -43,7 +43,7 @@ function UsersPage() {
           {clients.map((c) => (
             <Link
               key={c.id}
-              to="/users/$userId"
+              to="/agency/users/$userId"
               params={{ userId: c.id }}
               className="group block"
             >
