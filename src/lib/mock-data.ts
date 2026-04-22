@@ -25,6 +25,8 @@ export const adAccounts: AdAccount[] = [
     spend: 4231.22,
     lastActivity: "2m ago",
     platform: "Meta",
+    viaMainSupplier: true,
+    spendTrend: [320, 410, 380, 520, 610, 580, 720],
   },
   {
     id: "2",
@@ -36,6 +38,8 @@ export const adAccounts: AdAccount[] = [
     spend: 1980.4,
     lastActivity: "12m ago",
     platform: "Google",
+    viaMainSupplier: true,
+    spendTrend: [180, 220, 200, 260, 240, 310, 290],
   },
   {
     id: "3",
@@ -47,6 +51,8 @@ export const adAccounts: AdAccount[] = [
     spend: 0,
     lastActivity: "1h ago",
     platform: "Meta",
+    viaMainSupplier: false,
+    spendTrend: [0, 0, 0, 0, 0, 0, 0],
   },
   {
     id: "4",
@@ -58,6 +64,8 @@ export const adAccounts: AdAccount[] = [
     spend: 8821.5,
     lastActivity: "27m ago",
     platform: "TikTok",
+    viaMainSupplier: false,
+    spendTrend: [820, 910, 1020, 980, 1240, 1380, 1470],
   },
   {
     id: "5",
@@ -65,10 +73,12 @@ export const adAccounts: AdAccount[] = [
     accountId: "act_4499182",
     owner: { name: "Alicia Brooks", email: "alicia@quartzfin.com", initials: "AB" },
     status: "Paused",
-    balance: 530.0,
+    balance: 53.0,
     spend: 110.25,
     lastActivity: "3h ago",
     platform: "LinkedIn",
+    viaMainSupplier: true,
+    spendTrend: [80, 60, 40, 20, 10, 5, 0],
   },
   {
     id: "6",
@@ -80,6 +90,8 @@ export const adAccounts: AdAccount[] = [
     spend: 2104.15,
     lastActivity: "5h ago",
     platform: "Meta",
+    viaMainSupplier: true,
+    spendTrend: [240, 280, 310, 290, 360, 410, 380],
   },
   {
     id: "7",
@@ -91,6 +103,8 @@ export const adAccounts: AdAccount[] = [
     spend: 0,
     lastActivity: "yesterday",
     platform: "Google",
+    viaMainSupplier: false,
+    spendTrend: [0, 0, 0, 0, 0, 0, 0],
   },
   {
     id: "8",
@@ -98,10 +112,12 @@ export const adAccounts: AdAccount[] = [
     accountId: "act_1187320",
     owner: { name: "Emma Hughes", email: "emma@tideline.com", initials: "EH" },
     status: "Rejected",
-    balance: 0,
+    balance: 80,
     spend: 0,
     lastActivity: "2d ago",
     platform: "Meta",
+    viaMainSupplier: true,
+    spendTrend: [0, 0, 0, 0, 0, 0, 0],
   },
 ];
 
