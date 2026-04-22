@@ -271,6 +271,18 @@ function TopUpModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <div className="mt-5 space-y-5">
+            {/* Info banner */}
+            <div className="flex items-start gap-2.5 rounded-xl border border-primary/30 bg-primary/10 p-3 text-xs text-foreground">
+              <div className="mt-0.5 rounded-md bg-primary/20 p-1 text-primary-glow ring-1 ring-inset ring-primary/30">
+                <Wallet className="h-3.5 w-3.5" />
+              </div>
+              <p className="leading-relaxed">
+                <span className="font-semibold">Fund your wallet</span> to make
+                quick top-ups on ad accounts — geen bankoverschrijving meer per
+                account nodig.
+              </p>
+            </div>
+
             {/* Amount */}
             <div>
               <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Bedrag (€)</label>
