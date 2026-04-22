@@ -51,6 +51,7 @@ export const Route = createFileRoute("/agency/users/$userId")({
 
 function UserProfile() {
   const { user } = Route.useLoaderData();
+  const [editing, setEditing] = useState(false);
   const userAccounts = adAccounts.slice(0, Math.max(1, user.accounts));
 
   return (
