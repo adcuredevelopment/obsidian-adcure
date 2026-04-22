@@ -41,7 +41,7 @@ export const Route = createFileRoute("/agency/users_/$userId")({
       </Link>
     </AppShell>
   ),
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error }: { error: Error }) => (
     <AppShell>
       <p className="text-sm text-destructive">Error: {error.message}</p>
     </AppShell>
