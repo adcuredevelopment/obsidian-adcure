@@ -99,7 +99,7 @@ function ClientDashboard() {
             </span>
             <span className="flex-1">
               <span className="block text-sm font-semibold">Top-up Wallet</span>
-              <span className="block text-[11px] text-white/80">Voeg saldo toe via iDEAL</span>
+              <span className="block text-[11px] text-white/80">Voeg saldo toe via bankoverschrijving</span>
             </span>
             <ArrowUpRight className="h-4 w-4 opacity-80 transition group-hover:opacity-100" />
           </Link>
