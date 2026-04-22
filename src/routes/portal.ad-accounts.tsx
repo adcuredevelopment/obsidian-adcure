@@ -723,16 +723,55 @@ function Row({
 
 /* ---------------- Request Account Modal ---------------- */
 
+const PLATFORMS = [
+  {
+    id: "Meta" as const,
+    label: "Meta",
+    sub: "Facebook & Instagram",
+    initial: "M",
+    cls: "from-blue-500/30 to-violet-500/30",
+    activeCls: "border-blue-500/60 bg-blue-500/10 ring-blue-500/30",
+    iconText: "text-blue-300",
+  },
+  {
+    id: "Google" as const,
+    label: "Google Ads",
+    sub: "Search & Display",
+    initial: "G",
+    cls: "from-yellow-500/30 to-red-500/30",
+    activeCls: "border-yellow-500/60 bg-yellow-500/10 ring-yellow-500/30",
+    iconText: "text-yellow-300",
+  },
+  {
+    id: "TikTok" as const,
+    label: "TikTok Ads",
+    sub: "TikTok Business",
+    initial: "T",
+    cls: "from-pink-500/30 to-cyan-500/30",
+    activeCls: "border-pink-500/60 bg-pink-500/10 ring-pink-500/30",
+    iconText: "text-pink-300",
+  },
+];
+
+function isValidDomain(value: string) {
+  if (!value.trim()) return false;
+  const stripped = value.trim().replace(/^https?:\/\//i, "").split("/")[0];
+  return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i.test(stripped);
+}
+
 function RequestAccountModal({ onClose }: { onClose: () => void }) {
   const [platform, setPlatform] = useState<"Meta" | "Google" | "TikTok">("Meta");
   const [name, setName] = useState("");
   const [domain, setDomain] = useState("");
+  const [domainTouched, setDomainTouched] = useState(false);
   const [bmId, setBmId] = useState("");
   const [currency, setCurrency] = useState<"EUR" | "USD">("EUR");
   const [timezone, setTimezone] = useState("Europe/Amsterdam");
   const [submitted, setSubmitted] = useState(false);
 
-  const canSubmit = name.trim() && domain.trim() && bmId.trim();
+  const domainValid = isValidDomain(domain);
+  const showDomainError = domainTouched && domain.length > 0 && !domainValid;
+  const canSubmit = name.trim().length > 1 && domainValid && bmId.trim().length > 2;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -742,10 +781,14 @@ function RequestAccountModal({ onClose }: { onClose: () => void }) {
           <div>
             <h2 className="text-lg font-semibold">Request New Ad Account</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Het Adcure team beoordeelt je aanvraag binnen 1 werkdag.
+              Tell us a few details and our team will set it up for you.
             </p>
           </div>
-          <button onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">
+          <button
+            onClick={onClose}
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+            aria-label="Close"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -755,46 +798,103 @@ function RequestAccountModal({ onClose }: { onClose: () => void }) {
             <div className="rounded-full bg-success/15 p-3 ring-1 ring-inset ring-success/25">
               <CheckCircle2 className="h-6 w-6 text-success" />
             </div>
-            <h3 className="mt-4 text-base font-semibold">Aanvraag verzonden</h3>
+            <h3 className="mt-4 text-base font-semibold">Your account request has been submitted</h3>
             <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              Je vindt de status terug onder de tab "Requests".
+              We'll review and approve within 1 hour. You'll receive an email confirmation.
             </p>
             <button
               onClick={onClose}
               className="mt-5 rounded-lg gradient-primary px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
             >
-              Sluiten
+              Close
             </button>
           </div>
         ) : (
           <div className="mt-5 space-y-4">
+            {/* Platform selector */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Platform</label>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Platform <span className="text-destructive">*</span>
+              </label>
               <div className="grid grid-cols-3 gap-2">
-                {(["Meta", "Google", "TikTok"] as const).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setPlatform(p)}
-                    className={cn(
-                      "rounded-lg border py-2 text-sm font-semibold transition",
-                      platform === p
-                        ? "border-primary/50 bg-primary/10 text-foreground"
-                        : "border-border bg-background/40 hover:bg-accent",
-                    )}
-                  >
-                    {p}
-                  </button>
-                ))}
+                {PLATFORMS.map((p) => {
+                  const active = platform === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setPlatform(p.id)}
+                      className={cn(
+                        "group flex flex-col items-center gap-2 rounded-xl border p-3 text-center transition ring-1 ring-inset",
+                        active
+                          ? p.activeCls
+                          : "border-border bg-background/40 ring-transparent hover:bg-accent",
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br text-sm font-bold",
+                          p.cls,
+                          p.iconText,
+                        )}
+                      >
+                        {p.initial}
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold">{p.label}</p>
+                        <p className="text-[10px] text-muted-foreground">{p.sub}</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            <FieldText label="Account naam" value={name} onChange={setName} placeholder="Bijv. Lumen Skincare EU" />
-            <FieldText label="Domein" value={domain} onChange={setDomain} placeholder="lumen.co" />
-            <FieldText label="Business Manager ID" value={bmId} onChange={setBmId} placeholder="123456789" mono />
+            <FieldText
+              label="Account Name"
+              required
+              value={name}
+              onChange={setName}
+              placeholder="e.g. Lumen Skincare EU"
+            />
+
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Domain <span className="text-destructive">*</span>
+              </label>
+              <input
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                onBlur={() => setDomainTouched(true)}
+                placeholder="lumen.co"
+                className={cn(
+                  "w-full rounded-lg border bg-background/40 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2",
+                  showDomainError
+                    ? "border-destructive/60 focus:border-destructive/60 focus:ring-destructive/20"
+                    : "border-border focus:border-primary/50 focus:ring-primary/20",
+                )}
+              />
+              {showDomainError && (
+                <p className="mt-1 text-xs text-destructive">
+                  Enter a valid domain (e.g. example.com)
+                </p>
+              )}
+            </div>
+
+            <FieldText
+              label="Business Manager ID"
+              required
+              value={bmId}
+              onChange={setBmId}
+              placeholder="123456789"
+              mono
+            />
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Valuta</label>
+                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  Currency
+                </label>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as "EUR" | "USD")}
@@ -805,7 +905,9 @@ function RequestAccountModal({ onClose }: { onClose: () => void }) {
                 </select>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Tijdzone</label>
+                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  Timezone
+                </label>
                 <select
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
@@ -813,10 +915,21 @@ function RequestAccountModal({ onClose }: { onClose: () => void }) {
                 >
                   <option value="Europe/Amsterdam">Europe/Amsterdam</option>
                   <option value="Europe/London">Europe/London</option>
+                  <option value="Europe/Berlin">Europe/Berlin</option>
                   <option value="America/New_York">America/New_York</option>
                   <option value="America/Los_Angeles">America/Los_Angeles</option>
                 </select>
               </div>
+            </div>
+
+            {/* Info banner */}
+            <div className="flex items-start gap-2.5 rounded-xl border border-primary/30 bg-primary/10 p-3 text-xs">
+              <div className="mt-0.5 rounded-md bg-primary/20 p-1 text-primary-glow ring-1 ring-inset ring-primary/30">
+                <Clock className="h-3.5 w-3.5" />
+              </div>
+              <p className="leading-relaxed text-foreground">
+                Reviews take <span className="font-semibold">~1 hour</span> during business hours.
+              </p>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
@@ -824,7 +937,7 @@ function RequestAccountModal({ onClose }: { onClose: () => void }) {
                 onClick={onClose}
                 className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent"
               >
-                Annuleren
+                Cancel
               </button>
               <button
                 onClick={() => canSubmit && setSubmitted(true)}
@@ -850,16 +963,20 @@ function FieldText({
   onChange,
   placeholder,
   mono,
+  required,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   mono?: boolean;
+  required?: boolean;
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</label>
+      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+        {label} {required && <span className="text-destructive">*</span>}
+      </label>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
