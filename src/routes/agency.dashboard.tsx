@@ -300,33 +300,63 @@ function Dashboard() {
           <RecentActivity />
         </section>
 
+        {/* Today's Summary */}
+        <TodaysSummary />
+
         {/* Quick actions */}
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { label: "Create account", icon: Plus, accent: "primary" },
-            { label: "Top up wallet", icon: CreditCard, accent: "success" },
-            { label: "Invite client", icon: UserPlus, accent: "violet" },
-            { label: "Send message", icon: Send, accent: "warning" },
-          ].map((q) => (
-            <button
-              key={q.label}
+        <section className="space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Quick Actions
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Link
+              to="/agency/account-applications"
               className="group flex items-center gap-3 rounded-xl border border-border bg-card/60 p-3.5 text-left transition hover:border-border-strong hover:bg-card"
             >
-              <span
-                className={cn(
-                  "rounded-lg p-2 ring-1 ring-inset",
-                  q.accent === "primary" && "bg-primary/15 text-primary-glow ring-primary/25",
-                  q.accent === "success" && "bg-success/15 text-success ring-success/25",
-                  q.accent === "violet" && "bg-violet/15 text-violet ring-violet/25",
-                  q.accent === "warning" && "bg-warning/15 text-warning ring-warning/25",
-                )}
-              >
-                <q.icon className="h-4 w-4" />
+              <span className="rounded-lg bg-success/15 p-2 text-success ring-1 ring-inset ring-success/25">
+                <ClipboardCheck className="h-4 w-4" />
               </span>
-              <span className="text-sm font-medium">{q.label}</span>
-              <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
-            </button>
-          ))}
+              <span className="flex-1">
+                <span className="block text-sm font-medium">Approve Pending</span>
+                <span className="block text-[11px] text-muted-foreground">
+                  {PENDING_TOTAL} items waiting
+                </span>
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+            </Link>
+            <Link
+              to="/agency/wallets"
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card/60 p-3.5 text-left transition hover:border-border-strong hover:bg-card"
+            >
+              <span className="rounded-lg bg-warning/15 p-2 text-warning ring-1 ring-inset ring-warning/25">
+                <ShieldAlert className="h-4 w-4" />
+              </span>
+              <span className="flex-1">
+                <span className="block text-sm font-medium">View Mismatches</span>
+                <span className="block text-[11px] text-muted-foreground">
+                  3 wallet variances
+                </span>
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+            </Link>
+            <Link
+              to="/agency/system-health"
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card/60 p-3.5 text-left transition hover:border-border-strong hover:bg-card"
+            >
+              <span className="rounded-lg bg-violet/15 p-2 text-violet ring-1 ring-inset ring-violet/25">
+                <RefreshCw className="h-4 w-4" />
+              </span>
+              <span className="flex-1">
+                <span className="block text-sm font-medium">Run Reconciliation</span>
+                <span className="block text-[11px] text-muted-foreground">
+                  Last run 2h ago
+                </span>
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+            </Link>
+          </div>
         </section>
       </div>
     </AppShell>
