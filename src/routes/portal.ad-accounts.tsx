@@ -38,6 +38,9 @@ export const Route = createFileRoute("/portal/ad-accounts")({
 const WALLET_BALANCE = 1030;
 const FEE_PCT = 0.05;
 const VAT_PCT = 0.21;
+const MIN_AMOUNT = 10;
+// Indicative FX — for display only on the calculator
+const FX_USD_PER_EUR = 1.08;
 
 type EnrichedAccount = AdAccount & { lastTopUp: { amount: number; when: string } | null };
 
