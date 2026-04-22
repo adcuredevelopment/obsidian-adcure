@@ -14,6 +14,7 @@ import { Route as UsersRouteImport } from './routes/users'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SetPasswordRouteImport } from './routes/set-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -44,6 +45,11 @@ const SignUpRoute = SignUpRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetPasswordRoute = SetPasswordRouteImport.update({
+  id: '/set-password',
+  path: '/set-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
+  '/set-password': typeof SetPasswordRoute
   '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
+  '/set-password': typeof SetPasswordRoute
   '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
+  '/set-password': typeof SetPasswordRoute
   '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/invoices'
     | '/login'
+    | '/set-password'
     | '/settings'
     | '/sign-up'
     | '/support'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/invoices'
     | '/login'
+    | '/set-password'
     | '/settings'
     | '/sign-up'
     | '/support'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/invoices'
     | '/login'
+    | '/set-password'
     | '/settings'
     | '/sign-up'
     | '/support'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   InvoicesRoute: typeof InvoicesRoute
   LoginRoute: typeof LoginRoute
+  SetPasswordRoute: typeof SetPasswordRoute
   SettingsRoute: typeof SettingsRoute
   SignUpRoute: typeof SignUpRoute
   SupportRoute: typeof SupportRoute
@@ -207,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/set-password': {
+      id: '/set-password'
+      path: '/set-password'
+      fullPath: '/set-password'
+      preLoaderRoute: typeof SetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -270,6 +290,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   InvoicesRoute: InvoicesRoute,
   LoginRoute: LoginRoute,
+  SetPasswordRoute: SetPasswordRoute,
   SettingsRoute: SettingsRoute,
   SignUpRoute: SignUpRoute,
   SupportRoute: SupportRoute,
