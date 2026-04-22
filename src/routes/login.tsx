@@ -125,7 +125,7 @@ function LoginPage() {
         </div>
 
         <form onSubmit={onSubmit} noValidate>
-          <GlassCard glow className="space-y-5">
+          <GlassCard glow className="space-y-7 p-7">
             {/* Email */}
             <div className="space-y-1.5">
               <label
