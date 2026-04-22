@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletsRouteImport } from './routes/wallets'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignUpRouteImport } from './routes/sign-up'
@@ -25,6 +26,11 @@ import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
 const WalletsRoute = WalletsRouteImport.update({
   id: '/wallets',
   path: '/wallets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UsersRoute = UsersRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/wallets': typeof WalletsRoute
   '/users/$userId': typeof UsersUserIdRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/wallets': typeof WalletsRoute
   '/users/$userId': typeof UsersUserIdRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
   '/users': typeof UsersRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/wallets': typeof WalletsRoute
   '/users/$userId': typeof UsersUserIdRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/support'
     | '/users'
+    | '/verify-email'
     | '/wallets'
     | '/users/$userId'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/support'
     | '/users'
+    | '/verify-email'
     | '/wallets'
     | '/users/$userId'
   id:
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/support'
     | '/users'
+    | '/verify-email'
     | '/wallets'
     | '/users/$userId'
   fileRoutesById: FileRoutesById
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   SupportRoute: typeof SupportRoute
   UsersRoute: typeof UsersRouteWithChildren
+  VerifyEmailRoute: typeof VerifyEmailRoute
   WalletsRoute: typeof WalletsRoute
 }
 
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/wallets'
       fullPath: '/wallets'
       preLoaderRoute: typeof WalletsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/users': {
@@ -295,6 +315,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   SupportRoute: SupportRoute,
   UsersRoute: UsersRouteWithChildren,
+  VerifyEmailRoute: VerifyEmailRoute,
   WalletsRoute: WalletsRoute,
 }
 export const routeTree = rootRouteImport
