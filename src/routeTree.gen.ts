@@ -33,7 +33,7 @@ import { Route as AgencyDashboardRouteImport } from './routes/agency.dashboard'
 import { Route as AgencyAuditLogRouteImport } from './routes/agency.audit-log'
 import { Route as AgencyAdAccountsRouteImport } from './routes/agency.ad-accounts'
 import { Route as AgencyAccountApplicationsRouteImport } from './routes/agency.account-applications'
-import { Route as AgencyUsersUserIdRouteImport } from './routes/agency.users.$userId'
+import { Route as AgencyUsersUserIdRouteImport } from './routes/agency.users_.$userId'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -157,9 +157,9 @@ const AgencyAccountApplicationsRoute =
     getParentRoute: () => rootRouteImport,
   } as any)
 const AgencyUsersUserIdRoute = AgencyUsersUserIdRouteImport.update({
-  id: '/$userId',
-  path: '/$userId',
-  getParentRoute: () => AgencyUsersRoute,
+  id: '/agency/users_/$userId',
+  path: '/agency/users/$userId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -179,7 +179,7 @@ export interface FileRoutesByFullPath {
   '/agency/settings': typeof AgencySettingsRoute
   '/agency/support': typeof AgencySupportRoute
   '/agency/system-health': typeof AgencySystemHealthRoute
-  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/users': typeof AgencyUsersRoute
   '/agency/wallets': typeof AgencyWalletsRoute
   '/portal/ad-accounts': typeof PortalAdAccountsRoute
   '/portal/dashboard': typeof PortalDashboardRoute
@@ -206,7 +206,7 @@ export interface FileRoutesByTo {
   '/agency/settings': typeof AgencySettingsRoute
   '/agency/support': typeof AgencySupportRoute
   '/agency/system-health': typeof AgencySystemHealthRoute
-  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/users': typeof AgencyUsersRoute
   '/agency/wallets': typeof AgencyWalletsRoute
   '/portal/ad-accounts': typeof PortalAdAccountsRoute
   '/portal/dashboard': typeof PortalDashboardRoute
@@ -234,7 +234,7 @@ export interface FileRoutesById {
   '/agency/settings': typeof AgencySettingsRoute
   '/agency/support': typeof AgencySupportRoute
   '/agency/system-health': typeof AgencySystemHealthRoute
-  '/agency/users': typeof AgencyUsersRouteWithChildren
+  '/agency/users': typeof AgencyUsersRoute
   '/agency/wallets': typeof AgencyWalletsRoute
   '/portal/ad-accounts': typeof PortalAdAccountsRoute
   '/portal/dashboard': typeof PortalDashboardRoute
@@ -242,7 +242,7 @@ export interface FileRoutesById {
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/support': typeof PortalSupportRoute
   '/portal/wallet': typeof PortalWalletRoute
-  '/agency/users/$userId': typeof AgencyUsersUserIdRoute
+  '/agency/users_/$userId': typeof AgencyUsersUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -325,7 +325,7 @@ export interface FileRouteTypes {
     | '/portal/settings'
     | '/portal/support'
     | '/portal/wallet'
-    | '/agency/users/$userId'
+    | '/agency/users_/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -345,7 +345,7 @@ export interface RootRouteChildren {
   AgencySettingsRoute: typeof AgencySettingsRoute
   AgencySupportRoute: typeof AgencySupportRoute
   AgencySystemHealthRoute: typeof AgencySystemHealthRoute
-  AgencyUsersRoute: typeof AgencyUsersRouteWithChildren
+  AgencyUsersRoute: typeof AgencyUsersRoute
   AgencyWalletsRoute: typeof AgencyWalletsRoute
   PortalAdAccountsRoute: typeof PortalAdAccountsRoute
   PortalDashboardRoute: typeof PortalDashboardRoute
@@ -353,6 +353,7 @@ export interface RootRouteChildren {
   PortalSettingsRoute: typeof PortalSettingsRoute
   PortalSupportRoute: typeof PortalSupportRoute
   PortalWalletRoute: typeof PortalWalletRoute
+  AgencyUsersUserIdRoute: typeof AgencyUsersUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -525,27 +526,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencyAccountApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/agency/users/$userId': {
-      id: '/agency/users/$userId'
-      path: '/$userId'
+    '/agency/users_/$userId': {
+      id: '/agency/users_/$userId'
+      path: '/agency/users/$userId'
       fullPath: '/agency/users/$userId'
       preLoaderRoute: typeof AgencyUsersUserIdRouteImport
-      parentRoute: typeof AgencyUsersRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface AgencyUsersRouteChildren {
-  AgencyUsersUserIdRoute: typeof AgencyUsersUserIdRoute
-}
-
-const AgencyUsersRouteChildren: AgencyUsersRouteChildren = {
-  AgencyUsersUserIdRoute: AgencyUsersUserIdRoute,
-}
-
-const AgencyUsersRouteWithChildren = AgencyUsersRoute._addFileChildren(
-  AgencyUsersRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -564,7 +553,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgencySettingsRoute: AgencySettingsRoute,
   AgencySupportRoute: AgencySupportRoute,
   AgencySystemHealthRoute: AgencySystemHealthRoute,
-  AgencyUsersRoute: AgencyUsersRouteWithChildren,
+  AgencyUsersRoute: AgencyUsersRoute,
   AgencyWalletsRoute: AgencyWalletsRoute,
   PortalAdAccountsRoute: PortalAdAccountsRoute,
   PortalDashboardRoute: PortalDashboardRoute,
@@ -572,6 +561,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortalSettingsRoute: PortalSettingsRoute,
   PortalSupportRoute: PortalSupportRoute,
   PortalWalletRoute: PortalWalletRoute,
+  AgencyUsersUserIdRoute: AgencyUsersUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

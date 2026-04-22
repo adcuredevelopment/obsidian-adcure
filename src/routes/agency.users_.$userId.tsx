@@ -20,7 +20,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-export const Route = createFileRoute("/agency/users/$userId")({
+export const Route = createFileRoute("/agency/users_/$userId")({
   beforeLoad: () => requireRole("agency_admin"),
   loader: ({ params }) => {
     const user = clients.find((c) => c.id === params.userId);
