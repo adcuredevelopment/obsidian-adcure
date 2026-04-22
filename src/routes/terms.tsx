@@ -24,7 +24,7 @@ function TermsPage() {
           <h2 className="mt-6 text-lg font-semibold text-foreground">2. Account & Verificatie</h2>
           <p>Om te kunnen starten verifiëren we je KVK- en BTW-gegevens. We behouden ons het recht voor aanvragen te weigeren.</p>
           <h2 className="mt-6 text-lg font-semibold text-foreground">3. Betalingen</h2>
-          <p>Top-ups worden direct verwerkt via iDEAL. Niet-gebruikte saldi kunnen binnen 30 dagen teruggestort worden.</p>
+          <p>Top-ups worden verwerkt via bankoverschrijving zodra de betaling en het bewijs zijn ontvangen. Niet-gebruikte saldi kunnen binnen 30 dagen teruggestort worden.</p>
           <h2 className="mt-6 text-lg font-semibold text-foreground">4. Aansprakelijkheid</h2>
           <p>Adcure is niet aansprakelijk voor verliezen ten gevolge van platformwijzigingen door derden zoals Meta, Google of TikTok.</p>
         </div>

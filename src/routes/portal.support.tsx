@@ -28,7 +28,7 @@ export const Route = createFileRoute("/portal/support")({
 const FAQ = [
   {
     q: "Hoe lang duurt een top-up?",
-    a: "iDEAL top-ups worden meestal binnen 1 minuut bijgeschreven. Andere betaalmethoden kunnen tot 1 werkdag duren.",
+    a: "Bankoverschrijvingen worden meestal binnen 30 minuten verwerkt nadat we je betaalbewijs hebben ontvangen. Buiten kantooruren kan dit langer duren.",
   },
   {
     q: "Hoe vraag ik een nieuw ad account aan?",

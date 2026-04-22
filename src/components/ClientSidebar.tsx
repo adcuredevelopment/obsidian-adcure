@@ -42,10 +42,8 @@ const nav: NavItem[] = [
   },
   {
     to: "/portal/invoices",
-    label: "My Invoices",
+    label: "My Receipts",
     icon: FileText,
-    badge: "1",
-    badgeTone: "danger",
   },
   { to: "/portal/support", label: "Support", icon: LifeBuoy },
 ];
