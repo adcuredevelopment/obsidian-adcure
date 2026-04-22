@@ -82,7 +82,10 @@ function UserProfile() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent">
+              <button
+                onClick={() => setEditing(true)}
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent"
+              >
                 <Pencil className="h-4 w-4" /> Edit
               </button>
               <button className="inline-flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-sm font-medium text-warning hover:bg-warning/20">
