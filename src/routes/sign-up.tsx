@@ -359,7 +359,7 @@ function SignUpPage() {
               />
             </section>
 
-            <div className="h-px bg-border" />
+            <div className="my-4 h-px bg-border" />
 
             {/* Terms + submit */}
             <div className="space-y-4">
