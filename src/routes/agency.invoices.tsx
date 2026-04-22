@@ -54,7 +54,6 @@ const invoices: Invoice[] = [
     issueDate: "Apr 12, 2026",
     issueDateRaw: new Date("2026-04-12"),
     amount: 106.05,
-    status: "Paid",
     topUp: { amount: 100, platform: "Meta", accountId: "act_8821390" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0184",
   },
@@ -65,7 +64,6 @@ const invoices: Invoice[] = [
     issueDate: "Apr 10, 2026",
     issueDateRaw: new Date("2026-04-10"),
     amount: 530.25,
-    status: "Paid",
     topUp: { amount: 500, platform: "Google", accountId: "act_7710291" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0183",
   },
@@ -76,7 +74,6 @@ const invoices: Invoice[] = [
     issueDate: "Apr 8, 2026",
     issueDateRaw: new Date("2026-04-08"),
     amount: 2120.5,
-    status: "Paid",
     topUp: { amount: 2000, platform: "TikTok", accountId: "act_5544023" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0182",
   },
@@ -87,7 +84,6 @@ const invoices: Invoice[] = [
     issueDate: "Mar 28, 2026",
     issueDateRaw: new Date("2026-03-28"),
     amount: 265.13,
-    status: "Paid",
     topUp: { amount: 250, platform: "LinkedIn", accountId: "act_4499182" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0181",
   },
@@ -98,20 +94,8 @@ const invoices: Invoice[] = [
     issueDate: "Mar 25, 2026",
     issueDateRaw: new Date("2026-03-25"),
     amount: 795.38,
-    status: "Paid",
     topUp: { amount: 750, platform: "Meta", accountId: "act_3382910" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0180",
-  },
-  {
-    id: "6",
-    number: "INV-2026-0179",
-    client: { name: "Priya Nair", email: "priya@lumen.co", initials: "PN" },
-    issueDate: "Apr 14, 2026",
-    issueDateRaw: new Date("2026-04-14"),
-    amount: 318.15,
-    status: "Draft",
-    topUp: { amount: 300, platform: "Meta", accountId: "act_6602114" },
-    moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0179",
   },
   {
     id: "7",
@@ -120,7 +104,6 @@ const invoices: Invoice[] = [
     issueDate: "Mar 20, 2026",
     issueDateRaw: new Date("2026-03-20"),
     amount: 1060.5,
-    status: "Paid",
     topUp: { amount: 1000, platform: "Google", accountId: "act_2271504" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0178",
   },
@@ -131,15 +114,10 @@ const invoices: Invoice[] = [
     issueDate: "Mar 18, 2026",
     issueDateRaw: new Date("2026-03-18"),
     amount: 530.25,
-    status: "Paid",
     topUp: { amount: 500, platform: "Meta", accountId: "act_1187320" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0177",
   },
 ];
-
-function statusVariant(s: InvoiceStatus) {
-  return s === "Paid" ? ("success" as const) : ("neutral" as const);
-}
 
 function formatEUR(n: number) {
   return `€${n.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}`;
