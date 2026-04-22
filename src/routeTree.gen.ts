@@ -16,6 +16,7 @@ import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InvoicesRouteImport } from './routes/invoices'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
@@ -55,6 +56,11 @@ const InvoicesRoute = InvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdAccountsRoute = AdAccountsRouteImport.update({
   id: '/ad-accounts',
   path: '/ad-accounts',
@@ -74,6 +80,7 @@ const UsersUserIdRoute = UsersUserIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
   '/settings': typeof SettingsRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
   '/settings': typeof SettingsRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/invoices': typeof InvoicesRoute
   '/login': typeof LoginRoute
   '/settings': typeof SettingsRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ad-accounts'
+    | '/forgot-password'
     | '/invoices'
     | '/login'
     | '/settings'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ad-accounts'
+    | '/forgot-password'
     | '/invoices'
     | '/login'
     | '/settings'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ad-accounts'
+    | '/forgot-password'
     | '/invoices'
     | '/login'
     | '/settings'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdAccountsRoute: typeof AdAccountsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   InvoicesRoute: typeof InvoicesRoute
   LoginRoute: typeof LoginRoute
   SettingsRoute: typeof SettingsRoute
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ad-accounts': {
       id: '/ad-accounts'
       path: '/ad-accounts'
@@ -247,6 +267,7 @@ const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdAccountsRoute: AdAccountsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   InvoicesRoute: InvoicesRoute,
   LoginRoute: LoginRoute,
   SettingsRoute: SettingsRoute,
