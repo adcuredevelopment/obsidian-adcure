@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Megaphone,
@@ -21,6 +22,7 @@ import { CURRENT_CLIENT } from "@/lib/auth-mock";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/portal/dashboard")({
+  beforeLoad: () => requireRole("client"),
   head: () => ({
     meta: [
       { title: "Mijn Dashboard — Adcure" },

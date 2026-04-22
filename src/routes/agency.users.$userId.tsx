@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/agency/users/$userId")({
+  beforeLoad: () => requireRole("agency_admin"),
   loader: ({ params }) => {
     const user = clients.find((c) => c.id === params.userId);
     if (!user) throw notFound();

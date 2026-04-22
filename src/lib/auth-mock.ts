@@ -7,6 +7,7 @@
  * switchRole, useRole) can stay the same.
  */
 import { useSyncExternalStore } from "react";
+import { redirect } from "@tanstack/react-router";
 
 export type Role = "agency_admin" | "client" | "public";
 
@@ -57,6 +58,20 @@ export function dashboardPathForRole(role: Role): string {
   if (role === "agency_admin") return "/agency/dashboard";
   if (role === "client") return "/portal/dashboard";
   return "/login";
+}
+
+/**
+ * Throwable guard for TanStack Router `beforeLoad`.
+ * Redirects to /login if the current mock role does not match `required`.
+ *
+ * Usage inside a route file:
+ *   beforeLoad: () => requireRole("agency_admin"),
+ */
+export function requireRole(required: Role): void {
+  const role = getCurrentRole();
+  if (role !== required) {
+    throw redirect({ to: "/login" });
+  }
 }
 
 export const ROLE_LABELS: Record<Role, string> = {

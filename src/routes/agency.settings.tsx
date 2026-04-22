@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
@@ -22,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/settings")({
+  beforeLoad: () => requireRole("agency_admin"),
   head: () => ({
     meta: [
       { title: "Account Settings — Adcure Agency" },

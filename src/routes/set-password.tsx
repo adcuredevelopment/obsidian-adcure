@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { GlassCard } from "@/components/GlassCard";
+import { PublicShell } from "@/components/PublicShell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -100,37 +101,18 @@ function SetPasswordPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background px-4 py-12">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] gradient-glow opacity-80" />
-      <div className="relative mx-auto w-full max-w-md animate-fade-in">
-        {/* Logo */}
-        <div className="mb-7 flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-glow">
-            <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="currentColor">
-              <path d="M12 3 L21 20 L3 20 Z" />
-            </svg>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-semibold tracking-tight text-foreground">
-              Adcure
-            </div>
-            <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Agency
-            </div>
-          </div>
-        </div>
-
-        {/* Heading */}
-        <div className="mb-6 text-center">
-          <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground">
-            {success ? "Wachtwoord ingesteld" : "Stel je wachtwoord in"}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {success
-              ? "Je wordt doorgestuurd naar de inlogpagina…"
-              : "Welkom bij Adcure. Kies een sterk wachtwoord om je account te activeren."}
-          </p>
-        </div>
+    <PublicShell>
+      {/* Heading */}
+      <div className="mb-6 text-center">
+        <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground">
+          {success ? "Wachtwoord ingesteld" : "Stel je wachtwoord in"}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {success
+            ? "Je wordt doorgestuurd naar de inlogpagina…"
+            : "Welkom bij Adcure. Kies een sterk wachtwoord om je account te activeren."}
+        </p>
+      </div>
 
         {success ? (
           <GlassCard glow className="p-8">
@@ -330,10 +312,9 @@ function SetPasswordPage() {
           </form>
         )}
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Beschermd door enterprise-grade encryptie.
-        </p>
-      </div>
-    </div>
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        Beschermd door enterprise-grade encryptie.
+      </p>
+    </PublicShell>
   );
 }
