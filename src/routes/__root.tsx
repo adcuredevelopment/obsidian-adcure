@@ -52,11 +52,16 @@ export const Route = createRootRoute({
   notFoundComponent: NotFoundComponent,
 });
 
+// Runs before React hydrates so the saved theme is applied immediately
+// (no flash of wrong theme on navigation/reload).
+const themeBootstrap = `(function(){try{var t=localStorage.getItem('adcure.theme');var c=document.documentElement.classList;if(t==='light'){c.remove('dark');c.add('light');}else{c.remove('light');c.add('dark');}}catch(e){}})();`;
+
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
       </head>
       <body className="bg-background text-foreground antialiased">
         {children}
