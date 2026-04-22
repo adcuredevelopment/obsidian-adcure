@@ -260,7 +260,7 @@ function SignUpPage() {
         </div>
 
         <form onSubmit={onSubmit} noValidate>
-          <GlassCard className="space-y-7">
+          <GlassCard className="space-y-10">
             {/* Section 1 */}
             <section className="space-y-4">
               <SectionHeader
@@ -325,7 +325,7 @@ function SignUpPage() {
               />
             </section>
 
-            <div className="h-px bg-border" />
+            <div className="my-2 h-px bg-border" />
 
             {/* Section 2 */}
             <section className="space-y-4">
