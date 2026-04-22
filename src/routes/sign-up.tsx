@@ -431,12 +431,12 @@ function SignUpPage() {
 
               <p className="text-center text-sm text-muted-foreground">
                 Heb je al een account?{" "}
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
                 >
                   Inloggen
-                </a>
+                </Link>
               </p>
             </div>
           </GlassCard>
