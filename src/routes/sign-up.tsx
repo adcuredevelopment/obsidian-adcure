@@ -396,12 +396,12 @@ function SignUpPage() {
                   className="text-sm leading-snug text-muted-foreground"
                 >
                   Ik ga akkoord met de{" "}
-                  <Link
-                    to="/terms"
+                  <a
+                    href="/terms"
                     className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
                   >
                     voorwaarden
-                  </Link>{" "}
+                  </a>{" "}
                   en het privacybeleid.
                 </label>
               </div>
@@ -431,12 +431,12 @@ function SignUpPage() {
 
               <p className="text-center text-sm text-muted-foreground">
                 Heb je al een account?{" "}
-                <Link
-                  to="/login"
+                <a
+                  href="/login"
                   className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
                 >
                   Inloggen
-                </Link>
+                </a>
               </p>
             </div>
           </GlassCard>
