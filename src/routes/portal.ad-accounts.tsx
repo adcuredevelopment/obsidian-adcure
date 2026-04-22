@@ -297,20 +297,29 @@ function CopyChip({ value }: { value: string }) {
 }
 
 function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: () => void }) {
-  const [amount, setAmount] = useState(100);
+  const [amount, setAmount] = useState<number>(100);
+  const [currency, setCurrency] = useState<"EUR" | "USD">("EUR");
   const [method, setMethod] = useState<"wallet" | "bank">("wallet");
   const [proof, setProof] = useState<File | null>(null);
+  const [notes, setNotes] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const reference = useMemo(() => generateReference("ACC"), []);
 
-  const fee = +(amount * FEE_PCT).toFixed(2);
+  // Convert input to EUR for fee/VAT/wallet logic
+  const amountEUR = currency === "EUR" ? amount : +(amount / FX_USD_PER_EUR).toFixed(2);
+  const fee = +(amountEUR * FEE_PCT).toFixed(2);
   const vat = +(fee * VAT_PCT).toFixed(2);
-  const total = +(amount + fee + vat).toFixed(2);
+  const total = +(amountEUR + fee + vat).toFixed(2);
+
+  const belowMin = amount > 0 && amountEUR < MIN_AMOUNT;
   const insufficient = method === "wallet" && total > WALLET_BALANCE;
-  const canSubmit = method === "wallet" ? !insufficient && amount > 0 : !!proof && amount > 0;
+  const canSubmit =
+    amount > 0 &&
+    !belowMin &&
+    (method === "wallet" ? !insufficient : !!proof);
 
   const MAX_SIZE = 5 * 1024 * 1024;
   const ALLOWED = ["application/pdf", "image/png", "image/jpeg"];
@@ -318,20 +327,26 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
   function handleFile(file: File | null) {
     if (!file) return;
     if (!ALLOWED.includes(file.type)) {
-      setError("Alleen PDF, PNG of JPG toegestaan");
+      setError("Only PDF, PNG or JPG allowed");
       return;
     }
     if (file.size > MAX_SIZE) {
-      setError("Bestand is groter dan 5MB");
+      setError("File is larger than 5MB");
       return;
     }
     setError(null);
     setProof(file);
   }
 
+  const fmt = (v: number, c: "EUR" | "USD" = "EUR") =>
+    `${c === "EUR" ? "€" : "$"}${v.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        onClick={onClose}
+      />
       <div className="relative w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-elegant animate-fade-in max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between">
           <div>
@@ -340,7 +355,10 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
               {account.name} · <span className="font-mono">{account.accountId}</span>
             </p>
           </div>
-          <button onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">
+          <button
+            onClick={onClose}
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -350,35 +368,74 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
             <div className="rounded-full bg-success/15 p-3 ring-1 ring-inset ring-success/25">
               <CheckCircle2 className="h-6 w-6 text-success" />
             </div>
-            <h3 className="mt-4 text-base font-semibold">Top-up verzoek verzonden</h3>
+            <h3 className="mt-4 text-base font-semibold">Top-up request submitted</h3>
             <p className="mt-1 max-w-sm text-sm text-muted-foreground">
               {method === "wallet"
-                ? `€${total.toLocaleString("nl-NL", { minimumFractionDigits: 2 })} wordt binnen enkele minuten doorgezet naar het ad account.`
-                : "We verifiëren de overschrijving en zetten het saldo binnen 30 minuten door."}
+                ? `${fmt(total)} will be pushed to the ad account within a few minutes.`
+                : "We'll verify the bank transfer and credit the account within ~30 minutes."}
             </p>
             <button
               onClick={onClose}
               className="mt-5 rounded-lg gradient-primary px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
             >
-              Sluiten
+              Close
             </button>
           </div>
         ) : (
           <div className="mt-5 space-y-5">
             {/* Amount */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Ad Bedrag (€)</label>
-              <input
-                type="number"
-                value={amount}
-                min={10}
-                onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full rounded-lg border border-border bg-background/40 px-3 py-2 text-lg font-semibold tabular-nums focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Top-up amount
+              </label>
+              <div
+                className={cn(
+                  "flex items-stretch overflow-hidden rounded-xl border bg-background/40 transition focus-within:ring-2 focus-within:ring-primary/20",
+                  belowMin || insufficient
+                    ? "border-destructive/60 focus-within:border-destructive/60"
+                    : "border-border focus-within:border-primary/50",
+                )}
+              >
+                <span className="flex items-center pl-4 pr-2 text-2xl font-semibold text-muted-foreground">
+                  {currency === "EUR" ? "€" : "$"}
+                </span>
+                <input
+                  type="number"
+                  value={amount}
+                  min={0}
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                  className="flex-1 bg-transparent px-1 py-3 text-2xl font-bold tabular-nums focus:outline-none"
+                />
+                <div className="my-2 mr-2 flex items-center gap-1 rounded-lg bg-background/60 p-1 text-xs font-semibold">
+                  {(["EUR", "USD"] as const).map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCurrency(c)}
+                      className={cn(
+                        "rounded-md px-2.5 py-1 transition",
+                        currency === c
+                          ? "gradient-primary text-white shadow-glow"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {belowMin && (
+                <p className="mt-1.5 text-xs text-destructive">
+                  Amount must be at least €{MIN_AMOUNT.toLocaleString("nl-NL")}
+                </p>
+              )}
+
               <div className="mt-2 grid grid-cols-4 gap-2">
                 {[100, 500, 1000, 5000].map((a) => (
                   <button
                     key={a}
+                    type="button"
                     onClick={() => setAmount(a)}
                     className={cn(
                       "rounded-lg border py-2 text-xs font-semibold transition",
@@ -387,42 +444,52 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
                         : "border-border bg-background/40 hover:bg-accent",
                     )}
                   >
-                    €{a.toLocaleString("nl-NL")}
+                    {currency === "EUR" ? "€" : "$"}
+                    {a.toLocaleString("nl-NL")}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Fee calculator */}
-            <GlassCard className="!p-4">
-              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Kostenberekening</p>
-              <div className="mt-3 space-y-2 text-sm">
-                <CalcRow label="Ad Amount" value={amount} />
-                <CalcRow label={`Fee (${Math.round(FEE_PCT * 100)}%)`} value={fee} />
-                <CalcRow label={`BTW (${Math.round(VAT_PCT * 100)}% over fee)`} value={vat} />
-                <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-base font-semibold">
-                  <span>Totaal te betalen</span>
-                  <span className="tabular-nums">€{total.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}</span>
+            {amount > 0 && !belowMin && (
+              <GlassCard className="!p-4 ring-1 ring-inset ring-primary/20">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  Cost breakdown
+                </p>
+                <div className="mt-3 space-y-2 text-sm">
+                  <CalcRow label="Ad Account Amount" value={amountEUR} />
+                  <CalcRow label={`Top-up Fee (${Math.round(FEE_PCT * 100)}%)`} value={fee} />
+                  <CalcRow label={`VAT (${Math.round(VAT_PCT * 100)}% on fee)`} value={vat} />
+                  <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-base font-semibold">
+                    <span>Total to Pay</span>
+                    <span className="tabular-nums">{fmt(total)}</span>
+                  </div>
+                  {currency === "USD" && (
+                    <p className="text-[11px] text-muted-foreground">
+                      Converted at indicative rate 1 EUR = {FX_USD_PER_EUR.toFixed(2)} USD
+                    </p>
+                  )}
                 </div>
-              </div>
-            </GlassCard>
+              </GlassCard>
+            )}
 
             {/* Payment method */}
             <div>
-              <p className="mb-2 text-xs font-medium text-muted-foreground">Betaalmethode</p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">Payment method</p>
+              <div className="space-y-2">
                 <MethodOption
                   icon={<Wallet className="h-4 w-4" />}
                   label="Pay from Wallet"
-                  meta={`€${WALLET_BALANCE.toLocaleString("nl-NL", { minimumFractionDigits: 2 })} beschikbaar`}
+                  meta={`Available: ${fmt(WALLET_BALANCE)} EUR · Processing: ~10 minutes`}
                   selected={method === "wallet"}
-                  warning={insufficient ? "Onvoldoende saldo" : undefined}
+                  warning={insufficient ? "Insufficient wallet balance" : undefined}
                   onClick={() => setMethod("wallet")}
                 />
                 <MethodOption
                   icon={<Building2 className="h-4 w-4" />}
                   label="Bank Transfer"
-                  meta="Verwerking < 30 min"
+                  meta="Upload proof required · Processing: ~30 minutes"
                   selected={method === "bank"}
                   onClick={() => setMethod("bank")}
                 />
@@ -434,26 +501,28 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
               <>
                 <GlassCard className="!p-4">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Bankoverschrijving — Gegevens
+                    Bank transfer details
                   </p>
                   <div className="mt-3 space-y-2.5 text-sm">
-                    <Row label="Begunstigde" value="Adcure Agency" />
+                    <Row label="Beneficiary" value="Adcure Agency" />
                     <Row label="IBAN" value="NL14REV0766119691" mono copy />
                     <Row label="BIC" value="REV0NL22" mono copy />
-                    <Row label="Referentie" value={reference} mono copy highlight />
+                    <Row label="Reference" value={reference} mono copy highlight />
                   </div>
                   <div className="mt-3 flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/10 p-2.5 text-xs">
                     <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
                     <p>
-                      <span className="font-semibold text-warning">Gebruik exact deze referentie</span>{" "}
-                      voor directe verwerking.
+                      <span className="font-semibold text-warning">
+                        Use this exact reference
+                      </span>{" "}
+                      so we can match your payment automatically.
                     </p>
                   </div>
                 </GlassCard>
 
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                    Betaalbewijs uploaden
+                    Upload proof of payment
                   </label>
                   <div
                     onDragOver={(e) => {
@@ -481,7 +550,9 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
                         </div>
                         <div className="min-w-0 flex-1 text-left">
                           <p className="truncate text-sm font-medium">{proof.name}</p>
-                          <p className="text-xs text-muted-foreground">{(proof.size / 1024).toFixed(1)} KB</p>
+                          <p className="text-xs text-muted-foreground">
+                            {(proof.size / 1024).toFixed(1)} KB
+                          </p>
                         </div>
                         <button
                           type="button"
@@ -497,8 +568,12 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
                     ) : (
                       <>
                         <Upload className="h-5 w-5 text-muted-foreground" />
-                        <p className="text-sm font-medium">Sleep een bestand of klik om te uploaden</p>
-                        <p className="text-xs text-muted-foreground">PDF, PNG of JPG · max 5MB</p>
+                        <p className="text-sm font-medium">
+                          Drag & drop or click to upload
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          PDF, PNG or JPG · max 5MB
+                        </p>
                       </>
                     )}
                     <input
@@ -514,12 +589,29 @@ function TopUpModal({ account, onClose }: { account: EnrichedAccount; onClose: (
               </>
             )}
 
+            {/* Notes */}
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Notes <span className="font-normal text-muted-foreground/70">(optional)</span>
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value.slice(0, 500))}
+                rows={3}
+                placeholder="Anything we should know about this top-up?"
+                className="w-full resize-none rounded-lg border border-border bg-background/40 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <p className="mt-1 text-right text-[10px] text-muted-foreground">
+                {notes.length}/500
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 pt-1">
               <button
                 onClick={onClose}
                 className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent"
               >
-                Annuleren
+                Cancel
               </button>
               <button
                 onClick={() => canSubmit && setSubmitted(true)}
