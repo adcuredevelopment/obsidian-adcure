@@ -556,8 +556,7 @@ function NewAccountModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <Field label="Account Name" defaultValue="" />
-          <FieldControlled label="Account Name *" value={name} onChange={setName} placeholder="Northwind Performance" hidden />
+          <FieldControlled label="Account Name *" value={name} onChange={setName} placeholder="Northwind Performance" />
           <FieldControlled label="Domain *" value={domain} onChange={setDomain} placeholder="northwind.io" />
           <FieldControlled label="Business Manager ID *" value={bm} onChange={setBm} placeholder="123456789012345" />
 
