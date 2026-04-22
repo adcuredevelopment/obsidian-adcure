@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ClientShell } from "@/components/ClientShell";
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { CURRENT_CLIENT } from "@/lib/auth-mock";
 
 export const Route = createFileRoute("/portal/settings")({
+  beforeLoad: () => requireRole("client"),
   head: () => ({
     meta: [
       { title: "Instellingen — Adcure" },

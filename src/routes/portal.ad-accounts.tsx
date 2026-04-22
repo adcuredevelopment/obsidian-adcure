@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ClientShell } from "@/components/ClientShell";
@@ -8,6 +9,7 @@ import { CreditCard, Plus, Megaphone, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/portal/ad-accounts")({
+  beforeLoad: () => requireRole("client"),
   head: () => ({
     meta: [
       { title: "Mijn Ad Accounts — Adcure" },

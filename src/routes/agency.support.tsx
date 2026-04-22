@@ -1,9 +1,11 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { LifeBuoy } from "lucide-react";
 
 export const Route = createFileRoute("/agency/support")({
+  beforeLoad: () => requireRole("agency_admin"),
   head: () => ({ meta: [{ title: "Support — Adcure Agency" }] }),
   component: () => (
     <AppShell>

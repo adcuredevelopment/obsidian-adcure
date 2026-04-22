@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
@@ -6,6 +7,7 @@ import { ClipboardList, AlertTriangle, CheckCircle2, RefreshCw } from "lucide-re
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/audit-log")({
+  beforeLoad: () => requireRole("agency_admin"),
   head: () => ({ meta: [{ title: "Audit Log — Adcure Agency" }] }),
   component: AuditLogPage,
 });

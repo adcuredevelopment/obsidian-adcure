@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import { ClientShell } from "@/components/ClientShell";
 import { GlassCard } from "@/components/GlassCard";
@@ -6,6 +7,7 @@ import { Download, FileText, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/portal/invoices")({
+  beforeLoad: () => requireRole("client"),
   head: () => ({
     meta: [
       { title: "Mijn Facturen — Adcure" },

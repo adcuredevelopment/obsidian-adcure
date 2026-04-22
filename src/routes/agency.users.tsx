@@ -1,3 +1,4 @@
+import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
@@ -6,6 +7,7 @@ import { clients } from "@/lib/mock-data";
 import { Search, UserPlus, Mail, Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/agency/users")({
+  beforeLoad: () => requireRole("agency_admin"),
   head: () => ({
     meta: [
       { title: "Users — Adcure Agency" },
