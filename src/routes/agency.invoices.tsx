@@ -147,8 +147,7 @@ function InvoicesPage() {
   });
 
   const totalIssued = invoices.reduce((s, i) => s + i.amount, 0);
-  const paidCount = invoices.filter((i) => i.status === "Paid").length;
-  const draftCount = invoices.filter((i) => i.status === "Draft").length;
+  const totalTopUps = invoices.reduce((s, i) => s + i.topUp.amount, 0);
 
   return (
     <AppShell>
@@ -181,18 +180,18 @@ function InvoicesPage() {
               hint: `${invoices.length} receipts`,
             },
             {
-              label: "Paid",
-              value: `${paidCount}`,
+              label: "Receipts Paid",
+              value: `${invoices.length}`,
               icon: CheckCircle2,
               accent: "success" as const,
               hint: "Reconciled & sent",
             },
             {
-              label: "Draft",
-              value: `${draftCount}`,
+              label: "Top-up Volume",
+              value: formatEUR(totalTopUps),
               icon: FileText,
               accent: "neutral" as const,
-              hint: "Auto-generation pending",
+              hint: "Excl. fees & VAT",
             },
           ].map((m) => (
             <GlassCard key={m.label} className="p-4">
@@ -223,7 +222,7 @@ function InvoicesPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-1 rounded-xl border border-border bg-card/60 p-1 w-fit">
             {[
-              { id: "all", label: "All Invoices" },
+              { id: "all", label: "All Receipts" },
               { id: "month", label: "This Month" },
               { id: "quarter", label: "Last Quarter" },
             ].map((t) => (
@@ -265,9 +264,7 @@ function InvoicesPage() {
                   </div>
                   <p className="font-mono text-xs font-semibold">{inv.number}</p>
                 </div>
-                <StatusPill variant={statusVariant(inv.status)}>
-                  {inv.status === "Paid" ? "Paid ✓" : "Draft"}
-                </StatusPill>
+                <StatusPill variant="success">Paid ✓</StatusPill>
               </div>
 
               <div className="space-y-1">
@@ -351,9 +348,7 @@ function InvoiceDrawer({ invoice, onClose }: { invoice: Invoice; onClose: () => 
             <div>
               <h2 className="text-base font-semibold">{invoice.number}</h2>
               <div className="mt-1 flex items-center gap-2">
-                <StatusPill variant={statusVariant(invoice.status)}>
-                  {invoice.status === "Paid" ? "Paid ✓" : "Draft"}
-                </StatusPill>
+                <StatusPill variant="success">Paid ✓</StatusPill>
                 <span className="text-xs text-muted-foreground">
                   Issued on {invoice.issueDate}
                 </span>
