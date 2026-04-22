@@ -10,6 +10,8 @@ export type AdAccount = {
   spend: number;
   lastActivity: string;
   platform: "Meta" | "Google" | "TikTok" | "LinkedIn";
+  viaMainSupplier: boolean;
+  spendTrend: number[];
 };
 
 export const adAccounts: AdAccount[] = [
