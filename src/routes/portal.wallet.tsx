@@ -1,11 +1,10 @@
 import { requireRole } from "@/lib/auth-mock";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ClientShell } from "@/components/ClientShell";
 import { GlassCard } from "@/components/GlassCard";
 import { StatusPill } from "@/components/StatusPill";
 import {
-  Wallet,
   ArrowDownLeft,
   ArrowUpRight,
   CreditCard,
@@ -13,6 +12,12 @@ import {
   Filter,
   X,
   Plus,
+  Copy,
+  Check,
+  Upload,
+  FileText,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,12 +43,12 @@ type Tx = {
 };
 
 const transactions: Tx[] = [
-  { id: "1", type: "in", title: "Wallet top-up", meta: "iDEAL · ING Bank", amount: 2500, status: "Completed", time: "2u geleden" },
+  { id: "1", type: "in", title: "Wallet top-up", meta: "Bank transfer · ING Bank", amount: 2500, status: "Completed", time: "2u geleden" },
   { id: "2", type: "out", title: "Account top-up", meta: "Northwind Performance · Meta", amount: 1200, status: "Completed", time: "5u geleden" },
   { id: "3", type: "pending", title: "Top-up aangevraagd", meta: "Atlas DTC — EU · TikTok", amount: 800, status: "Pending", time: "1d geleden" },
   { id: "4", type: "out", title: "Account top-up", meta: "Helix Labs Growth · Google", amount: 450, status: "Completed", time: "2d geleden" },
   { id: "5", type: "in", title: "Refund verwerkt", meta: "Lumen Skincare · Meta", amount: 120, status: "Completed", time: "3d geleden" },
-  { id: "6", type: "in", title: "Wallet top-up", meta: "iDEAL · Rabobank", amount: 5000, status: "Completed", time: "1w geleden" },
+  { id: "6", type: "in", title: "Wallet top-up", meta: "Bank transfer · Rabobank", amount: 5000, status: "Completed", time: "1w geleden" },
 ];
 
 function ClientWalletPage() {
@@ -167,66 +172,283 @@ function ClientWalletPage() {
   );
 }
 
+function generateReference() {
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  const ts = Date.now().toString().slice(-4);
+  return `WAL-${ts}-${rand}`;
+}
+
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(value);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        } catch {
+          /* ignore */
+        }
+      }}
+      className="inline-flex items-center gap-1 rounded-md border border-border bg-background/40 px-2 py-1 text-[11px] font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
+      aria-label="Copy"
+    >
+      {copied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+      {copied ? "Gekopieerd" : "Kopieer"}
+    </button>
+  );
+}
+
 function TopUpModal({ onClose }: { onClose: () => void }) {
   const [amount, setAmount] = useState(500);
+  const [notes, setNotes] = useState("");
+  const [proof, setProof] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const reference = useMemo(() => generateReference(), []);
+  const iban = "NL14REV0766119691";
+  const bic = "REV0NL22";
+  const beneficiary = "Adcure Agency";
+
+  const MAX_SIZE = 5 * 1024 * 1024;
+  const ALLOWED = ["application/pdf", "image/png", "image/jpeg"];
+
+  function handleFile(file: File | null) {
+    if (!file) return;
+    if (!ALLOWED.includes(file.type)) {
+      setError("Alleen PDF, PNG of JPG toegestaan");
+      return;
+    }
+    if (file.size > MAX_SIZE) {
+      setError("Bestand is groter dan 5MB");
+      return;
+    }
+    setError(null);
+    setProof(file);
+  }
+
+  function onSubmit() {
+    if (!proof) return;
+    setSubmitted(true);
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-elegant animate-fade-in">
+      <div className="relative w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-elegant animate-fade-in max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-lg font-semibold">Top-up Wallet</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">Voeg saldo toe via iDEAL</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Voeg saldo toe via bankoverschrijving
+            </p>
           </div>
           <button onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="mt-5 space-y-4">
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Bedrag (€)</label>
-            <input
-              type="number"
-              value={amount}
-              min={10}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full rounded-lg border border-border bg-background/40 px-3 py-2 text-lg font-semibold tabular-nums focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
+
+        {submitted ? (
+          <div className="mt-6 flex flex-col items-center text-center">
+            <div className="rounded-full bg-success/15 p-3 ring-1 ring-inset ring-success/25">
+              <CheckCircle2 className="h-6 w-6 text-success" />
+            </div>
+            <h3 className="mt-4 text-base font-semibold">Aanvraag verzonden</h3>
+            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+              We verifiëren je betaling en crediteren je wallet binnen 30 minuten.
+            </p>
+            <button
+              onClick={onClose}
+              className="mt-5 rounded-lg gradient-primary px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+            >
+              Sluiten
+            </button>
           </div>
-          <div className="grid grid-cols-4 gap-2">
-            {[100, 500, 1000, 2500].map((a) => (
-              <button
-                key={a}
-                onClick={() => setAmount(a)}
-                className="rounded-lg border border-border bg-background/40 py-2 text-xs font-semibold hover:bg-accent"
+        ) : (
+          <div className="mt-5 space-y-5">
+            {/* Amount */}
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Bedrag (€)</label>
+              <input
+                type="number"
+                value={amount}
+                min={10}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="w-full rounded-lg border border-border bg-background/40 px-3 py-2 text-lg font-semibold tabular-nums focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <div className="mt-2 grid grid-cols-4 gap-2">
+                {[100, 500, 1000, 5000].map((a) => (
+                  <button
+                    key={a}
+                    onClick={() => setAmount(a)}
+                    className={cn(
+                      "rounded-lg border py-2 text-xs font-semibold transition",
+                      amount === a
+                        ? "border-primary/50 bg-primary/10 text-foreground"
+                        : "border-border bg-background/40 hover:bg-accent",
+                    )}
+                  >
+                    €{a.toLocaleString("nl-NL")}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Bank details */}
+            <GlassCard className="!p-4">
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Bankoverschrijving — Gegevens
+              </p>
+              <div className="mt-3 space-y-2.5 text-sm">
+                <Row label="Begunstigde" value={beneficiary} />
+                <Row label="IBAN" value={iban} mono copy />
+                <Row label="BIC" value={bic} mono copy />
+                <Row label="Referentie" value={reference} mono copy highlight />
+              </div>
+              <div className="mt-3 flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/10 p-2.5 text-xs text-warning-foreground">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+                <p>
+                  <span className="font-semibold text-warning">Gebruik exact deze referentie</span>{" "}
+                  voor directe verwerking.
+                </p>
+              </div>
+            </GlassCard>
+
+            {/* Upload */}
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Betaalbewijs uploaden
+              </label>
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  handleFile(e.dataTransfer.files?.[0] ?? null);
+                }}
+                onClick={() => inputRef.current?.click()}
+                className={cn(
+                  "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-5 text-center transition",
+                  isDragging
+                    ? "border-primary/60 bg-primary/5"
+                    : "border-border bg-background/30 hover:border-primary/40 hover:bg-background/50",
+                )}
               >
-                €{a}
+                {proof ? (
+                  <div className="flex w-full items-center gap-3">
+                    <div className="rounded-lg bg-primary/15 p-2 ring-1 ring-inset ring-primary/25">
+                      <FileText className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1 text-left">
+                      <p className="truncate text-sm font-medium">{proof.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(proof.size / 1024).toFixed(1)} KB
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setProof(null);
+                      }}
+                      className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="h-5 w-5 text-muted-foreground" />
+                    <p className="text-sm font-medium">Sleep een bestand of klik om te uploaden</p>
+                    <p className="text-xs text-muted-foreground">PDF, PNG of JPG · max 5MB</p>
+                  </>
+                )}
+                <input
+                  ref={inputRef}
+                  type="file"
+                  accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+                  className="hidden"
+                  onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+                />
+              </div>
+              {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Notities (optioneel)
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={2}
+                placeholder="Eventuele extra informatie voor het Adcure team…"
+                className="w-full resize-none rounded-lg border border-border bg-background/40 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                onClick={onClose}
+                className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Annuleren
               </button>
-            ))}
-          </div>
-          <div className="rounded-lg border border-border bg-background/30 p-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Bedrag</span>
-              <span className="tabular-nums">€{amount.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div className="mt-1 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Transactiekosten</span>
-              <span className="tabular-nums text-muted-foreground">€0.00</span>
-            </div>
-            <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-sm font-semibold">
-              <span>Totaal</span>
-              <span className="tabular-nums">€{amount.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}</span>
+              <button
+                onClick={onSubmit}
+                disabled={!proof}
+                className={cn(
+                  "flex-1 rounded-lg gradient-primary px-3 py-2 text-sm font-semibold text-white shadow-glow transition",
+                  proof ? "hover:brightness-110" : "cursor-not-allowed opacity-50",
+                )}
+              >
+                Verstuur Top-up Verzoek
+              </button>
             </div>
           </div>
-        </div>
-        <div className="mt-5 flex items-center gap-2">
-          <button onClick={onClose} className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent">
-            Annuleren
-          </button>
-          <button className="flex-1 rounded-lg gradient-primary px-3 py-2 text-sm font-semibold text-white shadow-glow transition hover:brightness-110">
-            Bevestigen via iDEAL
-          </button>
-        </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Row({
+  label,
+  value,
+  mono,
+  copy,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+  copy?: boolean;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2">
+        <span
+          className={cn(
+            "text-sm",
+            mono && "font-mono",
+            highlight ? "font-semibold text-primary-glow" : "text-foreground",
+          )}
+        >
+          {value}
+        </span>
+        {copy && <CopyButton value={value} />}
       </div>
     </div>
   );
