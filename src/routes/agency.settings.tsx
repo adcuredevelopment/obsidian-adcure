@@ -551,3 +551,333 @@ function PasswordField({
     </div>
   );
 }
+
+function IntegrationsTab() {
+  const [showToken, setShowToken] = useState(false);
+  const [autoInvoice, setAutoInvoice] = useState(true);
+  const [testing, setTesting] = useState<null | "ok" | "fail">(null);
+  const [tokenSaved, setTokenSaved] = useState(false);
+  const [copiedHook, setCopiedHook] = useState<string | null>(null);
+  const [token, setToken] = useState("sk_live_8f3a••••••••••••••••••••3c91");
+
+  const supplier = {
+    baseUrl: "https://api.adsgrid.io/v2",
+    lastCall: "Apr 22, 2026 · 14:32 UTC",
+    balanceUSD: "$48,210.55",
+    balanceEUR: "€44,180.92",
+  };
+
+  const moneybird = {
+    administrationId: "318492736510928374",
+    lastSync: "Apr 22, 2026 · 09:14 UTC",
+  };
+
+  const webhooks = [
+    { label: "Top-up confirmation", url: "https://api.adcure.agency/webhooks/supplier/topup", method: "POST" },
+    { label: "Account status update", url: "https://api.adcure.agency/webhooks/supplier/account-status", method: "POST" },
+    { label: "Spend reconciliation", url: "https://api.adcure.agency/webhooks/supplier/reconcile", method: "POST" },
+  ];
+
+  const recentHookCalls = [
+    { ts: "14:32:08", endpoint: "/topup", status: 200, ms: 142 },
+    { ts: "14:18:52", endpoint: "/account-status", status: 200, ms: 98 },
+    { ts: "13:55:20", endpoint: "/reconcile", status: 200, ms: 211 },
+    { ts: "13:40:11", endpoint: "/topup", status: 500, ms: 1820 },
+  ];
+
+  const runTest = () => {
+    setTesting(null);
+    setTimeout(() => setTesting("ok"), 600);
+  };
+
+  const saveToken = () => {
+    setTokenSaved(true);
+    setTimeout(() => setTokenSaved(false), 1800);
+  };
+
+  const copyHook = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedHook(url);
+      setTimeout(() => setCopiedHook(null), 1500);
+    } catch {
+      /* noop */
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Supplier API Status */}
+      <GlassCard className="!p-0 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-border p-5">
+          <div className="flex items-center gap-2">
+            <Plug className="h-4 w-4 text-primary-glow" />
+            <h2 className="text-lg font-semibold">Supplier API</h2>
+          </div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            </span>
+            Connected
+          </span>
+        </div>
+
+        <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+          <InfoRow label="API Base URL" value={supplier.baseUrl} mono />
+          <InfoRow label="Last Successful Call" value={supplier.lastCall} />
+          <div className="rounded-xl border border-border bg-background/40 p-4">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">Wallet Balance</p>
+            <div className="flex items-baseline gap-3">
+              <span className="text-xl font-bold tracking-tight">{supplier.balanceUSD}</span>
+              <span className="text-sm text-muted-foreground">USD</span>
+            </div>
+            <div className="mt-1 flex items-baseline gap-3">
+              <span className="text-xl font-bold tracking-tight">{supplier.balanceEUR}</span>
+              <span className="text-sm text-muted-foreground">EUR</span>
+            </div>
+          </div>
+          <div className="rounded-xl border border-border bg-background/40 p-4">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">Health Check</p>
+            <button
+              type="button"
+              onClick={runTest}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent"
+            >
+              <RefreshCw className="h-3.5 w-3.5" /> Test Connection
+            </button>
+            {testing === "ok" && (
+              <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-success">
+                <Check className="h-3.5 w-3.5" /> Reachable · 142 ms
+              </p>
+            )}
+            {testing === "fail" && (
+              <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-destructive">
+                <AlertCircle className="h-3.5 w-3.5" /> Failed to reach API
+              </p>
+            )}
+          </div>
+        </div>
+      </GlassCard>
+
+      {/* API Credentials */}
+      <GlassCard className="!p-0 overflow-hidden">
+        <div className="flex items-center gap-2 border-b border-border p-5">
+          <KeyRound className="h-4 w-4 text-primary-glow" />
+          <h2 className="text-lg font-semibold">API Credentials</h2>
+        </div>
+        <div className="space-y-4 p-5 sm:p-6">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+              Supplier Auth Token
+            </label>
+            <div className="relative">
+              <input
+                type={showToken ? "text" : "password"}
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background/40 px-3 py-2 pr-10 font-mono text-sm focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowToken((s) => !s)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+              >
+                {showToken ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Stored encrypted. Only the last 4 characters are visible to non-admin users.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={saveToken}
+              className="inline-flex items-center gap-2 rounded-lg gradient-primary px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+            >
+              <Save className="h-4 w-4" /> Update Token
+            </button>
+            <button
+              type="button"
+              onClick={runTest}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-accent"
+            >
+              <RefreshCw className="h-4 w-4" /> Test Connection
+            </button>
+            {tokenSaved && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-success">
+                <Check className="h-3.5 w-3.5" /> Token updated
+              </span>
+            )}
+          </div>
+        </div>
+      </GlassCard>
+
+      {/* Moneybird */}
+      <GlassCard className="!p-0 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-border p-5">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary-glow" />
+            <h2 className="text-lg font-semibold">Moneybird</h2>
+          </div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+            <Check className="h-3 w-3" /> Connected
+          </span>
+        </div>
+        <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+          <InfoRow label="Administration ID" value={moneybird.administrationId} mono />
+          <InfoRow label="Last Invoice Synced" value={moneybird.lastSync} />
+          <div className="sm:col-span-2 flex items-center justify-between rounded-xl border border-border bg-background/40 p-4">
+            <div>
+              <p className="text-sm font-semibold">Auto-invoice on approval</p>
+              <p className="text-xs text-muted-foreground">
+                Automatically create a Moneybird invoice when a top-up is approved.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAutoInvoice((v) => !v)}
+              className={cn(
+                "relative inline-flex h-6 w-11 items-center rounded-full transition",
+                autoInvoice ? "bg-primary" : "bg-muted",
+              )}
+              aria-pressed={autoInvoice}
+            >
+              <span
+                className={cn(
+                  "inline-block h-5 w-5 transform rounded-full bg-white shadow transition",
+                  autoInvoice ? "translate-x-5" : "translate-x-0.5",
+                )}
+              />
+            </button>
+          </div>
+        </div>
+      </GlassCard>
+
+      {/* Revolut (coming soon) */}
+      <GlassCard className="!p-0 overflow-hidden opacity-90">
+        <div className="flex items-center justify-between border-b border-border p-5">
+          <div className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4 text-primary-glow" />
+            <h2 className="text-lg font-semibold">Revolut</h2>
+          </div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            Not connected
+          </span>
+        </div>
+        <div className="flex flex-col items-start justify-between gap-3 p-5 sm:flex-row sm:items-center sm:p-6">
+          <p className="text-sm text-muted-foreground">
+            Sync incoming bank transfers automatically with Revolut Business. Coming soon.
+          </p>
+          <button
+            type="button"
+            disabled
+            className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground opacity-60"
+          >
+            <ExternalLink className="h-4 w-4" /> Connect Revolut
+          </button>
+        </div>
+      </GlassCard>
+
+      {/* Webhooks */}
+      <GlassCard className="!p-0 overflow-hidden">
+        <div className="flex items-center gap-2 border-b border-border p-5">
+          <Webhook className="h-4 w-4 text-primary-glow" />
+          <h2 className="text-lg font-semibold">Webhook Endpoints</h2>
+        </div>
+        <div className="divide-y divide-border">
+          {webhooks.map((h) => (
+            <div
+              key={h.url}
+              className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-md border border-border bg-background/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                    {h.method}
+                  </span>
+                  <p className="text-sm font-semibold">{h.label}</p>
+                </div>
+                <code className="mt-1 block truncate font-mono text-xs text-muted-foreground">
+                  {h.url}
+                </code>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => copyHook(h.url)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                >
+                  {copiedHook === h.url ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-success" /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" /> Copy
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                >
+                  <Send className="h-3.5 w-3.5" /> Test
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-border p-5 sm:p-6">
+          <p className="mb-3 text-xs font-medium text-muted-foreground">Recent webhook calls</p>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-sm">
+              <thead className="bg-background/40 text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 text-left font-medium">Time</th>
+                  <th className="px-3 py-2 text-left font-medium">Endpoint</th>
+                  <th className="px-3 py-2 text-left font-medium">Status</th>
+                  <th className="px-3 py-2 text-right font-medium">Latency</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {recentHookCalls.map((c, i) => (
+                  <tr key={i} className="bg-card/40">
+                    <td className="px-3 py-2 font-mono text-xs text-muted-foreground">{c.ts}</td>
+                    <td className="px-3 py-2 font-mono text-xs">{c.endpoint}</td>
+                    <td className="px-3 py-2">
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset",
+                          c.status >= 200 && c.status < 300
+                            ? "bg-success/10 text-success ring-success/25"
+                            : "bg-destructive/10 text-destructive ring-destructive/25",
+                        )}
+                      >
+                        {c.status}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-right font-mono text-xs text-muted-foreground">
+                      {c.ms} ms
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </GlassCard>
+    </div>
+  );
+}
+
+function InfoRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/40 p-4">
+      <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>
+      <p className={cn("text-sm font-semibold break-all", mono && "font-mono")}>{value}</p>
+    </div>
+  );
+}
