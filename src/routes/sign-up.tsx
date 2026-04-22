@@ -13,6 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { GlassCard } from "@/components/GlassCard";
+import { PublicShell } from "@/components/PublicShell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -201,63 +202,41 @@ function SignUpPage() {
 
   if (success) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-12">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] gradient-glow opacity-80" />
-        <div className="relative w-full max-w-md animate-fade-in">
-          <GlassCard glow className="text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-success/15 ring-1 ring-success/30">
-              <CheckCircle2 className="h-7 w-7 text-success" />
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Aanvraag ontvangen
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Bedankt {values.fullName.split(" ")[0] || ""}! We hebben je aanvraag
-              ontvangen en nemen binnen 24 uur contact op via{" "}
-              <span className="text-foreground">{values.email}</span>.
-            </p>
-            <Button asChild className="mt-6 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow hover:opacity-95">
-              <Link to="/login">
-                Naar inloggen <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </GlassCard>
-        </div>
-      </div>
+      <PublicShell showLogo={false}>
+        <GlassCard glow className="text-center">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-success/15 ring-1 ring-success/30">
+            <CheckCircle2 className="h-7 w-7 text-success" />
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Aanvraag ontvangen
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Bedankt {values.fullName.split(" ")[0] || ""}! We hebben je aanvraag
+            ontvangen en nemen binnen 24 uur contact op via{" "}
+            <span className="text-foreground">{values.email}</span>.
+          </p>
+          <Button asChild className="mt-6 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow hover:opacity-95">
+            <Link to="/login">
+              Naar inloggen <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </GlassCard>
+      </PublicShell>
     );
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background px-4 py-12">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] gradient-glow opacity-80" />
-      <div className="relative mx-auto w-full max-w-md animate-fade-in">
-        {/* Logo */}
-        <div className="mb-7 flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-glow">
-            <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="currentColor">
-              <path d="M12 3 L21 20 L3 20 Z" />
-            </svg>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-semibold tracking-tight text-foreground">
-              Adcure
-            </div>
-            <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Agency
-            </div>
-          </div>
-        </div>
-
-        {/* Heading */}
-        <div className="mb-6 text-center">
-          <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground">
-            Start Your AdCure Journey
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Registreer je bedrijf om toegang te krijgen tot premium ad accounts en
-            wallets.
-          </p>
-        </div>
+    <PublicShell>
+      {/* Heading */}
+      <div className="mb-6 text-center">
+        <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground">
+          Start Your AdCure Journey
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Registreer je bedrijf om toegang te krijgen tot premium ad accounts en
+          wallets.
+        </p>
+      </div>
 
         <form onSubmit={onSubmit} noValidate>
           <GlassCard className="space-y-10">
@@ -440,14 +419,13 @@ function SignUpPage() {
               </p>
             </div>
           </GlassCard>
-        </form>
+      </form>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Beschermd door enterprise-grade encryptie. Je gegevens worden nooit
-          gedeeld.
-        </p>
-      </div>
-    </div>
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        Beschermd door enterprise-grade encryptie. Je gegevens worden nooit
+        gedeeld.
+      </p>
+    </PublicShell>
   );
 }
 
