@@ -10,9 +10,9 @@ import {
   Megaphone,
   FileText,
 } from "lucide-react";
-import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { CURRENT_CLIENT } from "@/lib/auth-mock";
+import { useTheme, toggleTheme } from "@/lib/theme";
 
 type NavItem = {
   to: string;
@@ -52,13 +52,7 @@ const nav: NavItem[] = [
 
 export function ClientSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle("light", theme === "light");
-    root.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+  const theme = useTheme();
 
   return (
     <aside className="hidden w-[260px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
@@ -124,7 +118,7 @@ export function ClientSidebar() {
           </div>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+              onClick={toggleTheme}
               className="rounded-md p-1.5 text-muted-foreground hover:bg-background/60 hover:text-foreground"
               aria-label="Toggle theme"
             >
