@@ -125,9 +125,9 @@ function LoginPage() {
         </div>
 
         <form onSubmit={onSubmit} noValidate>
-          <GlassCard glow className="space-y-10 p-8">
+          <GlassCard glow className="p-8">
             {/* Email */}
-            <div className="space-y-1.5">
+            <div className="space-y-3">
               <label
                 htmlFor="email"
                 className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
@@ -158,7 +158,7 @@ function LoginPage() {
             </div>
 
             {/* Password */}
-            <div className="space-y-1.5">
+            <div className="mt-8 space-y-3">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
@@ -209,7 +209,7 @@ function LoginPage() {
             </div>
 
             {/* Remember me */}
-            <div className="flex items-center gap-3">
+            <div className="mt-8 flex items-center gap-3">
               <Checkbox
                 id="remember"
                 checked={values.remember}
@@ -226,7 +226,7 @@ function LoginPage() {
             <Button
               type="submit"
               disabled={submitting}
-              className="h-11 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-70"
+              className="mt-8 h-11 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-70"
             >
               {submitting ? (
                 <>
@@ -241,7 +241,7 @@ function LoginPage() {
               )}
             </Button>
 
-            <div className="flex items-center gap-3">
+            <div className="mt-10 flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
               <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 of
@@ -249,7 +249,7 @@ function LoginPage() {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <p className="text-center text-sm text-muted-foreground">
+            <p className="mt-6 text-center text-sm text-muted-foreground">
               Nog geen account?{" "}
               <Link
                 to="/sign-up"
