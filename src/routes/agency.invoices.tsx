@@ -31,8 +31,6 @@ export const Route = createFileRoute("/agency/invoices")({
   component: InvoicesPage,
 });
 
-type InvoiceStatus = "Paid" | "Draft";
-
 type Invoice = {
   id: string;
   number: string;
@@ -40,7 +38,6 @@ type Invoice = {
   issueDate: string;
   issueDateRaw: Date;
   amount: number;
-  status: InvoiceStatus;
   topUp: {
     amount: number;
     platform: "Meta" | "Google" | "TikTok" | "LinkedIn";
