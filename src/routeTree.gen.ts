@@ -14,6 +14,7 @@ import { Route as UsersRouteImport } from './routes/users'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as AdAccountsRouteImport } from './routes/ad-accounts'
 import { Route as IndexRouteImport } from './routes/index'
@@ -44,6 +45,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InvoicesRoute = InvoicesRouteImport.update({
   id: '/invoices',
   path: '/invoices',
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
   '/invoices': typeof InvoicesRoute
+  '/login': typeof LoginRoute
   '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
   '/invoices': typeof InvoicesRoute
+  '/login': typeof LoginRoute
   '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ad-accounts': typeof AdAccountsRoute
   '/invoices': typeof InvoicesRoute
+  '/login': typeof LoginRoute
   '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/support': typeof SupportRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ad-accounts'
     | '/invoices'
+    | '/login'
     | '/settings'
     | '/sign-up'
     | '/support'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ad-accounts'
     | '/invoices'
+    | '/login'
     | '/settings'
     | '/sign-up'
     | '/support'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ad-accounts'
     | '/invoices'
+    | '/login'
     | '/settings'
     | '/sign-up'
     | '/support'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdAccountsRoute: typeof AdAccountsRoute
   InvoicesRoute: typeof InvoicesRoute
+  LoginRoute: typeof LoginRoute
   SettingsRoute: typeof SettingsRoute
   SignUpRoute: typeof SignUpRoute
   SupportRoute: typeof SupportRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoices': {
@@ -228,6 +248,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdAccountsRoute: AdAccountsRoute,
   InvoicesRoute: InvoicesRoute,
+  LoginRoute: LoginRoute,
   SettingsRoute: SettingsRoute,
   SignUpRoute: SignUpRoute,
   SupportRoute: SupportRoute,
