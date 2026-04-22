@@ -31,8 +31,6 @@ export const Route = createFileRoute("/agency/invoices")({
   component: InvoicesPage,
 });
 
-type InvoiceStatus = "Paid" | "Draft";
-
 type Invoice = {
   id: string;
   number: string;
@@ -40,7 +38,6 @@ type Invoice = {
   issueDate: string;
   issueDateRaw: Date;
   amount: number;
-  status: InvoiceStatus;
   topUp: {
     amount: number;
     platform: "Meta" | "Google" | "TikTok" | "LinkedIn";
@@ -57,7 +54,6 @@ const invoices: Invoice[] = [
     issueDate: "Apr 12, 2026",
     issueDateRaw: new Date("2026-04-12"),
     amount: 106.05,
-    status: "Paid",
     topUp: { amount: 100, platform: "Meta", accountId: "act_8821390" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0184",
   },
@@ -68,7 +64,6 @@ const invoices: Invoice[] = [
     issueDate: "Apr 10, 2026",
     issueDateRaw: new Date("2026-04-10"),
     amount: 530.25,
-    status: "Paid",
     topUp: { amount: 500, platform: "Google", accountId: "act_7710291" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0183",
   },
@@ -79,7 +74,6 @@ const invoices: Invoice[] = [
     issueDate: "Apr 8, 2026",
     issueDateRaw: new Date("2026-04-08"),
     amount: 2120.5,
-    status: "Paid",
     topUp: { amount: 2000, platform: "TikTok", accountId: "act_5544023" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0182",
   },
@@ -90,7 +84,6 @@ const invoices: Invoice[] = [
     issueDate: "Mar 28, 2026",
     issueDateRaw: new Date("2026-03-28"),
     amount: 265.13,
-    status: "Paid",
     topUp: { amount: 250, platform: "LinkedIn", accountId: "act_4499182" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0181",
   },
@@ -101,20 +94,8 @@ const invoices: Invoice[] = [
     issueDate: "Mar 25, 2026",
     issueDateRaw: new Date("2026-03-25"),
     amount: 795.38,
-    status: "Paid",
     topUp: { amount: 750, platform: "Meta", accountId: "act_3382910" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0180",
-  },
-  {
-    id: "6",
-    number: "INV-2026-0179",
-    client: { name: "Priya Nair", email: "priya@lumen.co", initials: "PN" },
-    issueDate: "Apr 14, 2026",
-    issueDateRaw: new Date("2026-04-14"),
-    amount: 318.15,
-    status: "Draft",
-    topUp: { amount: 300, platform: "Meta", accountId: "act_6602114" },
-    moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0179",
   },
   {
     id: "7",
@@ -123,7 +104,6 @@ const invoices: Invoice[] = [
     issueDate: "Mar 20, 2026",
     issueDateRaw: new Date("2026-03-20"),
     amount: 1060.5,
-    status: "Paid",
     topUp: { amount: 1000, platform: "Google", accountId: "act_2271504" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0178",
   },
@@ -134,15 +114,10 @@ const invoices: Invoice[] = [
     issueDate: "Mar 18, 2026",
     issueDateRaw: new Date("2026-03-18"),
     amount: 530.25,
-    status: "Paid",
     topUp: { amount: 500, platform: "Meta", accountId: "act_1187320" },
     moneybirdUrl: "https://moneybird.com/123456/invoices/INV-2026-0177",
   },
 ];
-
-function statusVariant(s: InvoiceStatus) {
-  return s === "Paid" ? ("success" as const) : ("neutral" as const);
-}
 
 function formatEUR(n: number) {
   return `€${n.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}`;
@@ -172,8 +147,7 @@ function InvoicesPage() {
   });
 
   const totalIssued = invoices.reduce((s, i) => s + i.amount, 0);
-  const paidCount = invoices.filter((i) => i.status === "Paid").length;
-  const draftCount = invoices.filter((i) => i.status === "Draft").length;
+  const totalTopUps = invoices.reduce((s, i) => s + i.topUp.amount, 0);
 
   return (
     <AppShell>
@@ -206,18 +180,18 @@ function InvoicesPage() {
               hint: `${invoices.length} receipts`,
             },
             {
-              label: "Paid",
-              value: `${paidCount}`,
+              label: "Receipts Paid",
+              value: `${invoices.length}`,
               icon: CheckCircle2,
               accent: "success" as const,
               hint: "Reconciled & sent",
             },
             {
-              label: "Draft",
-              value: `${draftCount}`,
+              label: "Top-up Volume",
+              value: formatEUR(totalTopUps),
               icon: FileText,
               accent: "neutral" as const,
-              hint: "Auto-generation pending",
+              hint: "Excl. fees & VAT",
             },
           ].map((m) => (
             <GlassCard key={m.label} className="p-4">
@@ -248,7 +222,7 @@ function InvoicesPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-1 rounded-xl border border-border bg-card/60 p-1 w-fit">
             {[
-              { id: "all", label: "All Invoices" },
+              { id: "all", label: "All Receipts" },
               { id: "month", label: "This Month" },
               { id: "quarter", label: "Last Quarter" },
             ].map((t) => (
@@ -290,9 +264,7 @@ function InvoicesPage() {
                   </div>
                   <p className="font-mono text-xs font-semibold">{inv.number}</p>
                 </div>
-                <StatusPill variant={statusVariant(inv.status)}>
-                  {inv.status === "Paid" ? "Paid ✓" : "Draft"}
-                </StatusPill>
+                <StatusPill variant="success">Paid ✓</StatusPill>
               </div>
 
               <div className="space-y-1">
@@ -376,9 +348,7 @@ function InvoiceDrawer({ invoice, onClose }: { invoice: Invoice; onClose: () => 
             <div>
               <h2 className="text-base font-semibold">{invoice.number}</h2>
               <div className="mt-1 flex items-center gap-2">
-                <StatusPill variant={statusVariant(invoice.status)}>
-                  {invoice.status === "Paid" ? "Paid ✓" : "Draft"}
-                </StatusPill>
+                <StatusPill variant="success">Paid ✓</StatusPill>
                 <span className="text-xs text-muted-foreground">
                   Issued on {invoice.issueDate}
                 </span>

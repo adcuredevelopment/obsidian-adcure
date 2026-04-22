@@ -47,7 +47,7 @@ type ClientTransaction = {
 };
 
 const recentTransactions: ClientTransaction[] = [
-  { id: "tx1", type: "topup", title: "Wallet top-up", meta: "iDEAL · ING Bank", amount: "+€2,500.00", status: "Completed", time: "2u geleden" },
+  { id: "tx1", type: "topup", title: "Wallet top-up", meta: "Bankoverschrijving · ING Bank", amount: "+€2,500.00", status: "Completed", time: "2u geleden" },
   { id: "tx2", type: "spend", title: "Account top-up", meta: "Northwind Performance · Meta", amount: "−€1,200.00", status: "Completed", time: "5u geleden" },
   { id: "tx3", type: "request", title: "Top-up aangevraagd", meta: "Atlas DTC — EU · TikTok", amount: "€800.00", status: "Pending", time: "1d geleden" },
   { id: "tx4", type: "spend", title: "Account top-up", meta: "Helix Labs Growth · Google", amount: "−€450.00", status: "Completed", time: "2d geleden" },
