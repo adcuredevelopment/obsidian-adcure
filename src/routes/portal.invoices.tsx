@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ClientShell } from "@/components/ClientShell";
 import { GlassCard } from "@/components/GlassCard";
 import { StatusPill } from "@/components/StatusPill";
-import { Download, FileText, Info, ExternalLink } from "lucide-react";
+import { Download, FileText, Info } from "lucide-react";
 
 export const Route = createFileRoute("/portal/invoices")({
   beforeLoad: () => requireRole("client"),
@@ -132,18 +132,10 @@ function ClientInvoicesPage() {
                       {formatEUR(inv.amount)}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end">
                         <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium hover:bg-accent">
                           <Download className="h-3.5 w-3.5" /> PDF
                         </button>
-                        <a
-                          href={inv.moneybirdUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium hover:bg-accent"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" /> Moneybird
-                        </a>
                       </div>
                     </td>
                   </tr>
