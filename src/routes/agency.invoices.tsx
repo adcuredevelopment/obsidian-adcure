@@ -256,7 +256,7 @@ function InvoicesPage() {
         {/* Receipt cards grid */}
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((inv) => (
-            <GlassCard key={inv.id} className="flex flex-col gap-6 p-6">
+            <GlassCard key={inv.id} className="flex flex-col gap-7 p-7">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/30 to-violet/30 ring-1 ring-inset ring-border">
@@ -267,7 +267,7 @@ function InvoicesPage() {
                 <StatusPill variant="success">Paid ✓</StatusPill>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet/40 to-primary/40 text-[10px] font-semibold text-white">
                     {inv.client.initials}
@@ -281,13 +281,13 @@ function InvoicesPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4 rounded-xl border border-border bg-background/40 p-4 text-sm">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                     Issued
                   </p>
                   <p className="font-medium">{inv.issueDate}</p>
                 </div>
-                <div className="space-y-1.5 text-right">
+                <div className="space-y-2 text-right">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                     Amount
                   </p>
@@ -295,7 +295,7 @@ function InvoicesPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 pt-1">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelected(inv)}
                   className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium hover:bg-accent"
