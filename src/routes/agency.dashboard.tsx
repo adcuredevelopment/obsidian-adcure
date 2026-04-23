@@ -644,7 +644,7 @@ function TodaysSummary() {
         <div className="rounded-xl border border-border bg-background/40 p-3">
           <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Volume</p>
           <p className="mt-1 text-lg font-semibold tabular-nums">
-            ${amount.toLocaleString()}
+            ${amount.toLocaleString("en-US")}
           </p>
         </div>
         <div className="rounded-xl border border-border bg-background/40 p-3">
