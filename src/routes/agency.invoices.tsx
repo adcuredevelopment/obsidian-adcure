@@ -256,60 +256,62 @@ function InvoicesPage() {
         {/* Receipt cards grid */}
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((inv) => (
-            <GlassCard key={inv.id} className="flex flex-col gap-7 p-7">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/30 to-violet/30 ring-1 ring-inset ring-border">
-                    <FileText className="h-4 w-4" />
+            <GlassCard key={inv.id} className="p-7">
+              <div className="flex flex-col gap-7">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/30 to-violet/30 ring-1 ring-inset ring-border">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <p className="font-mono text-xs font-semibold leading-none">{inv.number}</p>
                   </div>
-                  <p className="font-mono text-xs font-semibold">{inv.number}</p>
+                  <StatusPill variant="success">Paid ✓</StatusPill>
                 </div>
-                <StatusPill variant="success">Paid ✓</StatusPill>
-              </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet/40 to-primary/40 text-[10px] font-semibold text-white">
-                    {inv.client.initials}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet/40 to-primary/40 text-[10px] font-semibold text-white">
+                      {inv.client.initials}
+                    </div>
+                    <p className="text-sm font-medium leading-snug">{inv.client.name}</p>
                   </div>
-                  <p className="text-sm font-medium">{inv.client.name}</p>
-                </div>
-                <p className="pl-11 text-xs leading-relaxed text-muted-foreground">
-                  Top-up: {formatEUR(inv.topUp.amount)} ({inv.topUp.platform}{" "}
-                  <span className="font-mono">{inv.topUp.accountId}</span>)
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 rounded-xl border border-border bg-background/40 p-4 text-sm">
-                <div className="space-y-2">
-                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Issued
+                  <p className="pl-11 text-xs leading-relaxed text-muted-foreground">
+                    Top-up: {formatEUR(inv.topUp.amount)} ({inv.topUp.platform}{" "}
+                    <span className="font-mono">{inv.topUp.accountId}</span>)
                   </p>
-                  <p className="font-medium">{inv.issueDate}</p>
                 </div>
-                <div className="space-y-2 text-right">
-                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Amount
-                  </p>
-                  <p className="font-semibold tabular-nums">{formatEUR(inv.amount)}</p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setSelected(inv)}
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium hover:bg-accent"
-                >
-                  <Download className="h-3.5 w-3.5" /> Download PDF
-                </button>
-                <a
-                  href={inv.moneybirdUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium hover:bg-accent"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" /> View in Moneybird
-                </a>
+                <div className="grid grid-cols-2 gap-4 rounded-xl border border-border bg-background/40 p-4 text-sm">
+                  <div className="space-y-2">
+                    <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Issued
+                    </p>
+                    <p className="font-medium leading-snug">{inv.issueDate}</p>
+                  </div>
+                  <div className="space-y-2 text-right">
+                    <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Amount
+                    </p>
+                    <p className="font-semibold leading-snug tabular-nums">{formatEUR(inv.amount)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setSelected(inv)}
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium hover:bg-accent"
+                  >
+                    <Download className="h-3.5 w-3.5 shrink-0" /> Download PDF
+                  </button>
+                  <a
+                    href={inv.moneybirdUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium hover:bg-accent"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5 shrink-0" /> View in Moneybird
+                  </a>
+                </div>
               </div>
             </GlassCard>
           ))}
