@@ -5,33 +5,17 @@ import {
   LogOut,
   Shield,
   UserCircle,
-  Globe,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
-import {
-  ROLE_LABELS,
-  switchRole,
-  useRole,
-  type Role,
-  dashboardPathForRole,
-} from "@/lib/auth-mock";
+import { signOut } from "@/lib/auth";
 
 type Variant = "agency" | "client";
-
-const ROLE_ICON: Record<Role, React.ComponentType<{ className?: string }>> = {
-  agency_admin: Shield,
-  client: UserCircle,
-  public: Globe,
-};
 
 export function UserMenu({
   variant,
@@ -46,24 +30,27 @@ export function UserMenu({
   initials: string;
   subtitle?: string;
 }) {
-  const role = useRole();
   const navigate = useNavigate();
   const settingsPath = variant === "agency" ? "/agency/settings" : "/portal/settings";
   const profilePath = settingsPath;
-  const RoleIcon = ROLE_ICON[role];
-  const roleLabel =
-    role === "agency_admin" ? "Admin" : role === "client" ? "Client" : "Public";
-  const roleVariantClass =
-    role === "agency_admin"
-      ? "bg-primary/15 text-primary-glow ring-primary/25"
-      : role === "client"
-        ? "bg-violet/15 text-violet ring-violet/25"
-        : "bg-muted text-muted-foreground ring-border";
 
-  const onRoleChange = (next: string) => {
-    const r = next as Role;
-    switchRole(r);
-    navigate({ to: dashboardPathForRole(r) });
+  // Role display based on variant
+  const RoleIcon = variant === "agency" ? Shield : UserCircle;
+  const roleLabel = variant === "agency" ? "Admin" : "Client";
+  const roleVariantClass =
+    variant === "agency"
+      ? "bg-primary/15 text-primary-glow ring-primary/25"
+      : "bg-violet/15 text-violet ring-violet/25";
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      // signOut already redirects to /login via window.location
+    } catch (error) {
+      console.error("Sign out error:", error);
+      // Fallback redirect
+      navigate({ to: "/login" });
+    }
   };
 
   return (
@@ -119,26 +106,8 @@ export function UserMenu({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Preview as
-        </DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={role} onValueChange={onRoleChange}>
-          {(Object.keys(ROLE_LABELS) as Role[]).map((r) => {
-            const Icon = ROLE_ICON[r];
-            return (
-              <DropdownMenuRadioItem key={r} value={r} className="cursor-pointer">
-                <Icon className="h-4 w-4" />
-                <span>{ROLE_LABELS[r]}</span>
-              </DropdownMenuRadioItem>
-            );
-          })}
-        </DropdownMenuRadioGroup>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => {
-            switchRole("public");
-            navigate({ to: "/login" });
-          }}
+          onClick={handleSignOut}
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="h-4 w-4" /> Sign out

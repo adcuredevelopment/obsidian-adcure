@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   ArrowRight,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { GlassCard } from "@/components/GlassCard";
 import { PublicShell } from "@/components/PublicShell";
@@ -18,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { submitApplication } from "@/lib/auth";
 
 export const Route = createFileRoute("/sign-up")({
   head: () => ({
@@ -69,6 +71,9 @@ const FREE_EMAIL_DOMAINS = [
   "msn.com",
 ];
 
+// Current terms version - update when terms change
+const TERMS_VERSION = "1.0";
+
 // IBAN mod-97 check
 function isValidIban(raw: string): boolean {
   const iban = raw.replace(/\s+/g, "").toUpperCase();
@@ -78,7 +83,6 @@ function isValidIban(raw: string): boolean {
     .split("")
     .map((c) => (/[A-Z]/.test(c) ? (c.charCodeAt(0) - 55).toString() : c))
     .join("");
-  // mod 97 on long string
   let remainder = 0;
   for (const ch of numeric) {
     remainder = (remainder * 10 + Number(ch)) % 97;
@@ -162,6 +166,7 @@ function SignUpPage() {
   const [touched, setTouched] = useState<Partial<Record<keyof FormState, boolean>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setValues((prev) => {
@@ -171,6 +176,8 @@ function SignUpPage() {
       }
       return next;
     });
+    // Clear submit error when user types
+    if (submitError) setSubmitError(null);
   };
 
   const handleBlur = (key: keyof FormState) => {
@@ -193,11 +200,30 @@ function SignUpPage() {
       agree: true,
     });
     if (Object.keys(next).length > 0) return;
+
     setSubmitting(true);
-    // Mock async submission
-    await new Promise((r) => setTimeout(r, 900));
-    setSubmitting(false);
-    setSuccess(true);
+    setSubmitError(null);
+
+    try {
+      // Real submission to database
+      await submitApplication({
+        company_name: values.companyName.trim(),
+        kvk_number: values.kvk.trim(),
+        vat_number: values.btw.trim().toUpperCase(),
+        iban: values.iban.trim() || undefined,
+        contact_name: values.fullName.trim(),
+        contact_email: values.email.trim().toLowerCase(),
+        contact_phone: values.phone.replace(/\s+/g, ""),
+        terms_accepted_version: TERMS_VERSION,
+      });
+
+      setSuccess(true);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Er ging iets mis";
+      setSubmitError(errorMessage);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (success) {
@@ -238,187 +264,214 @@ function SignUpPage() {
         </p>
       </div>
 
-        <form onSubmit={onSubmit} noValidate>
-          <GlassCard className="space-y-10">
-            {/* Section 1 */}
-            <section className="space-y-4">
-              <SectionHeader
-                index={1}
-                title="Bedrijfsgegevens"
-                subtitle="Officiële gegevens voor facturatie"
-              />
+      <form onSubmit={onSubmit} noValidate>
+        <GlassCard className="space-y-10">
+          {/* Submit Error Banner */}
+          {submitError && (
+            <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+              <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
+              <p className="text-sm text-destructive">{submitError}</p>
+            </div>
+          )}
 
-              <Field
-                id="companyName"
-                label="Bedrijfsnaam"
-                icon={Building2}
-                hint="Bijv. AdCure Holding B.V."
-                value={values.companyName}
-                onChange={(v) => setField("companyName", v)}
-                onBlur={() => handleBlur("companyName")}
-                error={errors.companyName}
-                required
-                autoComplete="organization"
-              />
+          {/* Section 1 */}
+          <section className="space-y-4">
+            <SectionHeader
+              index={1}
+              title="Bedrijfsgegevens"
+              subtitle="Officiële gegevens voor facturatie"
+            />
 
-              <Field
-                id="kvk"
-                label="KVK Nummer"
-                icon={Hash}
-                hint="8 cijfers, bijv. 12345678"
-                placeholder="12345678"
-                value={values.kvk}
-                onChange={(v) => setField("kvk", v.replace(/\D/g, "").slice(0, 8))}
-                onBlur={() => handleBlur("kvk")}
-                error={errors.kvk}
-                required
-                inputMode="numeric"
-              />
+            <Field
+              id="companyName"
+              label="Bedrijfsnaam"
+              icon={Building2}
+              hint="Bijv. AdCure Holding B.V."
+              value={values.companyName}
+              onChange={(v) => setField("companyName", v)}
+              onBlur={() => handleBlur("companyName")}
+              error={errors.companyName}
+              required
+              autoComplete="organization"
+              disabled={submitting}
+            />
 
-              <Field
-                id="btw"
-                label="BTW Nummer"
-                icon={FileBadge}
-                hint="Formaat: NL123456789B01"
-                placeholder="NL123456789B01"
-                value={values.btw}
-                onChange={(v) => setField("btw", v.toUpperCase().slice(0, 14))}
-                onBlur={() => handleBlur("btw")}
-                error={errors.btw}
-                required
-              />
+            <Field
+              id="kvk"
+              label="KVK Nummer"
+              icon={Hash}
+              hint="8 cijfers, bijv. 12345678"
+              placeholder="12345678"
+              value={values.kvk}
+              onChange={(v) => setField("kvk", v.replace(/\D/g, "").slice(0, 8))}
+              onBlur={() => handleBlur("kvk")}
+              error={errors.kvk}
+              required
+              inputMode="numeric"
+              disabled={submitting}
+            />
 
-              <Field
-                id="iban"
-                label="IBAN"
-                optional
-                icon={Landmark}
-                hint="Optioneel — bijv. NL91ABNA0417164300"
-                placeholder="NL91ABNA0417164300"
-                value={values.iban}
-                onChange={(v) =>
-                  setField("iban", v.toUpperCase().replace(/\s+/g, "").slice(0, 34))
-                }
-                onBlur={() => handleBlur("iban")}
-                error={errors.iban}
-              />
-            </section>
+            <Field
+              id="btw"
+              label="BTW Nummer"
+              icon={FileBadge}
+              hint="Formaat: NL123456789B01"
+              placeholder="NL123456789B01"
+              value={values.btw}
+              onChange={(v) => setField("btw", v.toUpperCase().slice(0, 14))}
+              onBlur={() => handleBlur("btw")}
+              error={errors.btw}
+              required
+              disabled={submitting}
+            />
 
-            <div className="my-2 h-px bg-border" />
+            <Field
+              id="iban"
+              label="IBAN"
+              optional
+              icon={Landmark}
+              hint="Optioneel — bijv. NL91ABNA0417164300"
+              placeholder="NL91ABNA0417164300"
+              value={values.iban}
+              onChange={(v) =>
+                setField("iban", v.toUpperCase().replace(/\s+/g, "").slice(0, 34))
+              }
+              onBlur={() => handleBlur("iban")}
+              error={errors.iban}
+              disabled={submitting}
+            />
+          </section>
 
-            {/* Section 2 */}
-            <section className="space-y-4">
-              <SectionHeader
-                index={2}
-                title="Contactgegevens"
-                subtitle="Hoe kunnen we je bereiken?"
-              />
+          <div className="my-2 h-px bg-border" />
 
-              <Field
-                id="fullName"
-                label="Volledige Naam"
-                icon={User}
-                hint="Voor- en achternaam"
-                placeholder="Jan de Vries"
-                value={values.fullName}
-                onChange={(v) => setField("fullName", v)}
-                onBlur={() => handleBlur("fullName")}
-                error={errors.fullName}
-                required
-                autoComplete="name"
-              />
+          {/* Section 2 */}
+          <section className="space-y-4">
+            <SectionHeader
+              index={2}
+              title="Contactgegevens"
+              subtitle="Hoe kunnen we je bereiken?"
+            />
 
-              <Field
-                id="email"
-                label="Zakelijk Email"
-                type="email"
-                icon={Mail}
-                hint="Geen Gmail/Hotmail — gebruik je bedrijfsdomein"
-                placeholder="jan@bedrijf.nl"
-                value={values.email}
-                onChange={(v) => setField("email", v)}
-                onBlur={() => handleBlur("email")}
-                error={errors.email}
-                required
-                autoComplete="email"
-              />
+            <Field
+              id="fullName"
+              label="Volledige Naam"
+              icon={User}
+              hint="Voor- en achternaam"
+              placeholder="Jan de Vries"
+              value={values.fullName}
+              onChange={(v) => setField("fullName", v)}
+              onBlur={() => handleBlur("fullName")}
+              error={errors.fullName}
+              required
+              autoComplete="name"
+              disabled={submitting}
+            />
 
-              <Field
-                id="phone"
-                label="Telefoonnummer"
-                type="tel"
-                icon={Phone}
-                hint="Internationaal formaat: +31612345678"
-                placeholder="+31612345678"
-                value={values.phone}
-                onChange={(v) => setField("phone", v.replace(/[^\d+]/g, ""))}
-                onBlur={() => handleBlur("phone")}
-                error={errors.phone}
-                required
-                autoComplete="tel"
-              />
-            </section>
+            <Field
+              id="email"
+              label="Zakelijk Email"
+              type="email"
+              icon={Mail}
+              hint="Geen Gmail/Hotmail — gebruik je bedrijfsdomein"
+              placeholder="jan@bedrijf.nl"
+              value={values.email}
+              onChange={(v) => setField("email", v)}
+              onBlur={() => handleBlur("email")}
+              error={errors.email}
+              required
+              autoComplete="email"
+              disabled={submitting}
+            />
 
-            <div className="my-4 h-px bg-border" />
+            <Field
+              id="phone"
+              label="Telefoonnummer"
+              type="tel"
+              icon={Phone}
+              hint="Internationaal formaat: +31612345678"
+              placeholder="+31612345678"
+              value={values.phone}
+              onChange={(v) => setField("phone", v.replace(/[^\d+]/g, ""))}
+              onBlur={() => handleBlur("phone")}
+              error={errors.phone}
+              required
+              autoComplete="tel"
+              disabled={submitting}
+            />
+          </section>
 
-            {/* Terms + submit */}
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="agree"
-                  checked={values.agree}
-                  onCheckedChange={(c) => setField("agree", c === true)}
-                  className="mt-0.5"
-                />
-                <label
-                  htmlFor="agree"
-                  className="text-sm leading-snug text-muted-foreground"
-                >
-                  Ik ga akkoord met de{" "}
-                  <a
-                    href="/terms"
-                    className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
-                  >
-                    voorwaarden
-                  </a>{" "}
-                  en het privacybeleid.
-                </label>
-              </div>
-              {errors.agree && touched.agree ? (
-                <p className="-mt-2 text-xs font-medium text-destructive">
-                  {errors.agree}
-                </p>
-              ) : null}
+          <div className="my-4 h-px bg-border" />
 
-              <Button
-                type="submit"
+          {/* Terms + submit */}
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="agree"
+                checked={values.agree}
+                onCheckedChange={(c) => setField("agree", c === true)}
+                className="mt-0.5"
                 disabled={submitting}
-                className="h-11 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-70"
+              />
+              <label
+                htmlFor="agree"
+                className="text-sm leading-snug text-muted-foreground"
               >
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Aanvraag verzenden…
-                  </>
-                ) : (
-                  <>
-                    Aanvraag Indienen
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </Button>
-
-              <p className="text-center text-sm text-muted-foreground">
-                Heb je al een account?{" "}
-                <Link
-                  to="/login"
+                Ik ga akkoord met de{" "}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
                 >
-                  Inloggen
-                </Link>
-              </p>
+                  voorwaarden
+                </a>{" "}
+                en het{" "}
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
+                >
+                  privacybeleid
+                </a>
+                .
+              </label>
             </div>
-          </GlassCard>
+            {errors.agree && touched.agree ? (
+              <p className="-mt-2 text-xs font-medium text-destructive">
+                {errors.agree}
+              </p>
+            ) : null}
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="h-11 w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-70"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Aanvraag verzenden…
+                </>
+              ) : (
+                <>
+                  Aanvraag Indienen
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              Heb je al een account?{" "}
+              <Link
+                to="/login"
+                className="font-medium text-foreground underline-offset-4 hover:text-primary-glow hover:underline"
+              >
+                Inloggen
+              </Link>
+            </p>
+          </div>
+        </GlassCard>
       </form>
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -468,6 +521,7 @@ type FieldProps = {
   optional?: boolean;
   autoComplete?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  disabled?: boolean;
 };
 
 function Field({
@@ -485,6 +539,7 @@ function Field({
   optional,
   autoComplete,
   inputMode,
+  disabled,
 }: FieldProps) {
   const hasError = Boolean(error);
   return (
@@ -515,6 +570,7 @@ function Field({
           autoComplete={autoComplete}
           inputMode={inputMode}
           aria-invalid={hasError}
+          disabled={disabled}
           className={cn(
             "h-11 rounded-lg border-border bg-background/40 pl-9 text-sm placeholder:text-muted-foreground/60 focus-visible:ring-primary/40",
             hasError &&

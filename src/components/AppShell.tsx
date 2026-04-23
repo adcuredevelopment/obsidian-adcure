@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { AgencySidebar } from "./AgencySidebar";
 import { UserMenu } from "./UserMenu";
-import { PreviewModeBanner } from "./PreviewModeBanner";
-import { CURRENT_ADMIN } from "@/lib/auth-mock";
+import { useAuthState } from "@/lib/auth-mock";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const auth = useAuthState();
+
   return (
     <div className="flex min-h-screen bg-background">
       <AgencySidebar />
@@ -14,12 +15,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mb-4 flex items-center justify-end">
             <UserMenu
               variant="agency"
-              name={CURRENT_ADMIN.name}
-              email={CURRENT_ADMIN.email}
-              initials={CURRENT_ADMIN.initials}
+              name={auth.fullName ?? "Admin"}
+              email={auth.email ?? ""}
+              initials={auth.initials ?? "??"}
             />
           </div>
-          <PreviewModeBanner />
           {children}
         </div>
       </main>

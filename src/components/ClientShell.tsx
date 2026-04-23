@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { ClientSidebar } from "./ClientSidebar";
 import { UserMenu } from "./UserMenu";
-import { PreviewModeBanner } from "./PreviewModeBanner";
-import { CURRENT_CLIENT } from "@/lib/auth-mock";
+import { useAuthState } from "@/lib/auth-mock";
 
 export function ClientShell({ children }: { children: ReactNode }) {
+  const auth = useAuthState();
+
   return (
     <div className="flex min-h-screen bg-background">
       <ClientSidebar />
@@ -14,13 +15,12 @@ export function ClientShell({ children }: { children: ReactNode }) {
           <div className="mb-4 flex items-center justify-end">
             <UserMenu
               variant="client"
-              name={CURRENT_CLIENT.name}
-              email={CURRENT_CLIENT.email}
-              initials={CURRENT_CLIENT.initials}
-              subtitle={CURRENT_CLIENT.company}
+              name={auth.fullName ?? "Client"}
+              email={auth.email ?? ""}
+              initials={auth.initials ?? "??"}
+              subtitle={auth.organizationName ?? undefined}
             />
           </div>
-          <PreviewModeBanner />
           {children}
         </div>
       </main>
