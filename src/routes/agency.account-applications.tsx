@@ -591,10 +591,10 @@ function DetailModal({
 
   const statusVariant =
     app.status === "pending"
-      ? "warning"
+      ? "pending"
       : app.status === "approved"
         ? "success"
-        : "destructive";
+        : "danger";
 
   return (
     <Dialog open={!!app} onOpenChange={onClose}>
