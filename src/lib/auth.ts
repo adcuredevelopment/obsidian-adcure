@@ -152,82 +152,80 @@ type ApplicationData = {
 }
 
 /**
- * Submit account application (public sign-up)
- * Creates pending application for admin review.
+ * Submit account application (public sign-up).
  * 
- * Checks for existing pending applications first to give user-friendly errors.
- * Database has partial unique indexes on (kvk, vat, email) WHERE status='pending'
- * as a safety net.
+ * IMPORTANT: This is called by ANONYMOUS users (not logged in).
+ * Anonymous users can ONLY INSERT on account_applications (no SELECT).
+ * That's why we skip the duplicate pre-check - the database unique
+ * indexes will catch duplicates and return a specific error code.
  */
 export async function submitApplication(data: ApplicationData) {
-  // Pre-check: does a pending application already exist?
-  const { data: existing, error: checkError } = await supabase
-    .from('account_applications')
-    .select('id, kvk_number, vat_number, contact_email')
-    .eq('status', 'pending')
-    .or(
-      `kvk_number.eq.${data.kvk_number},` +
-      `vat_number.eq.${data.vat_number},` +
-      `contact_email.eq.${data.contact_email}`
-    )
-    .maybeSingle()
-
-  if (checkError) {
-    // Log but continue - DB constraint will catch it anyway
-    console.error('Error checking existing applications:', checkError)
-  }
-
-  if (existing) {
-    // Give specific error based on which field matches
-    if (existing.kvk_number === data.kvk_number) {
-      throw new Error(
-        'Er is al een aanvraag met dit KVK nummer in behandeling. ' +
-        'Neem contact op met support als je vragen hebt.'
-      )
-    }
-    if (existing.vat_number === data.vat_number) {
-      throw new Error(
-        'Er is al een aanvraag met dit BTW nummer in behandeling. ' +
-        'Neem contact op met support als je vragen hebt.'
-      )
-    }
-    if (existing.contact_email === data.contact_email) {
-      throw new Error(
-        'Er is al een aanvraag met dit email adres in behandeling. ' +
-        'Check je inbox voor eerdere correspondentie.'
-      )
-    }
-  }
-
   // Insert new application
-  const { data: application, error } = await supabase
+  // NOTE: We don't call .select() because anon users can't SELECT
+  // We also don't pre-check for duplicates for the same reason
+  // The database partial unique indexes will catch duplicates
+  const { error } = await supabase
     .from('account_applications')
     .insert({
       ...data,
       terms_accepted_at: new Date().toISOString(),
       status: 'pending',
     })
-    .select()
-    .single()
 
   if (error) {
-    // Database unique constraint violation (safety net)
+    console.error('Submit application error:', error)
+
+    // Database unique constraint violation - duplicate pending application
     if (error.code === '23505') {
+      // Determine which field conflicted based on error message
+      const msg = error.message.toLowerCase()
+      
+      if (msg.includes('kvk')) {
+        throw new Error(
+          'Er is al een aanvraag met dit KVK nummer in behandeling. ' +
+          'Neem contact op met support als je vragen hebt.'
+        )
+      }
+      if (msg.includes('vat')) {
+        throw new Error(
+          'Er is al een aanvraag met dit BTW nummer in behandeling. ' +
+          'Neem contact op met support als je vragen hebt.'
+        )
+      }
+      if (msg.includes('email')) {
+        throw new Error(
+          'Er is al een aanvraag met dit email adres in behandeling. ' +
+          'Check je inbox voor eerdere correspondentie.'
+        )
+      }
+      
+      // Generic duplicate error
       throw new Error(
         'Er is al een aanvraag met deze gegevens in behandeling.'
       )
     }
-    // Check constraint violation (bv. ongeldig KVK format)
+
+    // Check constraint violation (e.g., invalid KVK format)
     if (error.code === '23514') {
       throw new Error(
         'Ongeldige gegevens. Controleer KVK en BTW formaat.'
       )
     }
-    console.error('Submit application error:', error)
+
+    // RLS policy violation
+    if (error.code === '42501') {
+      throw new Error(
+        'Toegang geweigerd. Probeer de pagina te vernieuwen en opnieuw in te dienen.'
+      )
+    }
+
+    // Generic error
     throw new Error(error.message || 'Er ging iets mis bij het verzenden.')
   }
 
-  return application
+  // Success - return success indicator
+  // We can't return the created row because we can't SELECT it as anon
+  return { success: true }
 }
 
 // ============================================

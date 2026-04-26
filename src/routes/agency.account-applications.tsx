@@ -31,7 +31,19 @@ import {
   Timer,
   Calendar,
   User,
+  Loader2,
+  Copy,
+  AlertCircle,
 } from "lucide-react";
+import {
+  useApplications,
+  approveApplication,
+  rejectApplication,
+  calculateAvgReviewTime,
+  formatRelativeTime,
+  type Application,
+} from "@/lib/applications";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/agency/account-applications")({
   beforeLoad: () => requireRole("agency_admin"),
@@ -39,159 +51,34 @@ export const Route = createFileRoute("/agency/account-applications")({
   component: AccountApplicationsPage,
 });
 
-type AppStatus = "Pending" | "Approved" | "Rejected";
-
-type Application = {
-  id: string;
-  company: string;
-  contact: string;
-  email: string;
-  phone: string;
-  kvk: string;
-  vat: string;
-  iban: string;
-  address: string;
-  city: string;
-  country: string;
-  website: string;
-  appliedAt: string;
-  status: AppStatus;
-  rejectionReason?: string;
-};
-
-const initialApps: Application[] = [
-  {
-    id: "1",
-    company: "Helix Labs B.V.",
-    contact: "Daniel Kim",
-    email: "dan@helixlabs.com",
-    phone: "+31 6 1234 5678",
-    kvk: "12345678",
-    vat: "NL001234567B89",
-    iban: "NL91ABNA0417164300",
-    address: "Keizersgracht 123",
-    city: "Amsterdam",
-    country: "Netherlands",
-    website: "helixlabs.com",
-    appliedAt: "2 hours ago",
-    status: "Pending",
-  },
-  {
-    id: "2",
-    company: "Ember Coffee Co.",
-    contact: "Riley Chen",
-    email: "riley@embercoffee.co",
-    phone: "+31 6 8765 4321",
-    kvk: "23456789",
-    vat: "NL002345678B90",
-    iban: "NL44RABO0123456789",
-    address: "Witte de Withstraat 22",
-    city: "Rotterdam",
-    country: "Netherlands",
-    website: "embercoffee.co",
-    appliedAt: "5 hours ago",
-    status: "Pending",
-  },
-  {
-    id: "3",
-    company: "Tideline Apparel",
-    contact: "Emma Hughes",
-    email: "emma@tideline.com",
-    phone: "+31 6 1122 3344",
-    kvk: "34567890",
-    vat: "NL003456789B01",
-    iban: "NL18INGB0002345678",
-    address: "Strandweg 8",
-    city: "The Hague",
-    country: "Netherlands",
-    website: "tideline.com",
-    appliedAt: "1 day ago",
-    status: "Pending",
-  },
-  {
-    id: "4",
-    company: "Lumen Skincare",
-    contact: "Priya Nair",
-    email: "priya@lumen.co",
-    phone: "+31 6 5566 7788",
-    kvk: "45678901",
-    vat: "NL004567890B12",
-    iban: "NL62TRIO0379658123",
-    address: "Oudegracht 200",
-    city: "Utrecht",
-    country: "Netherlands",
-    website: "lumen.co",
-    appliedAt: "2 days ago",
-    status: "Pending",
-  },
-  {
-    id: "5",
-    company: "Northwind Performance",
-    contact: "Sofia Martinez",
-    email: "sofia@northwind.io",
-    phone: "+31 6 9988 7766",
-    kvk: "56789012",
-    vat: "NL005678901B23",
-    iban: "NL14REV0766119691",
-    address: "Herengracht 45",
-    city: "Amsterdam",
-    country: "Netherlands",
-    website: "northwind.io",
-    appliedAt: "3 days ago",
-    status: "Approved",
-  },
-  {
-    id: "6",
-    company: "Bramble & Co.",
-    contact: "Owen Walker",
-    email: "owen@bramble.co",
-    phone: "+31 6 4433 2211",
-    kvk: "67890123",
-    vat: "NL006789012B34",
-    iban: "NL20INGB0009876543",
-    address: "Lange Voorhout 12",
-    city: "The Hague",
-    country: "Netherlands",
-    website: "bramble.co",
-    appliedAt: "4 days ago",
-    status: "Rejected",
-    rejectionReason: "KVK number could not be verified.",
-  },
-];
-
-type FilterTab = "Pending" | "Approved" | "Rejected" | "All";
+type FilterTab = "pending" | "approved" | "rejected" | "all";
 
 function AccountApplicationsPage() {
-  const [apps, setApps] = useState(initialApps);
-  const [tab, setTab] = useState<FilterTab>("Pending");
+  const { applications, loading, error, pending, approved, rejected, refetch } = useApplications();
+  const [tab, setTab] = useState<FilterTab>("pending");
   const [approveTarget, setApproveTarget] = useState<Application | null>(null);
   const [rejectTarget, setRejectTarget] = useState<Application | null>(null);
   const [detailTarget, setDetailTarget] = useState<Application | null>(null);
 
   const counts = useMemo(
     () => ({
-      Pending: apps.filter((a) => a.status === "Pending").length,
-      Approved: apps.filter((a) => a.status === "Approved").length,
-      Rejected: apps.filter((a) => a.status === "Rejected").length,
-      All: apps.length,
+      pending: pending.length,
+      approved: approved.length,
+      rejected: rejected.length,
+      all: applications.length,
     }),
-    [apps],
+    [applications, pending, approved, rejected]
   );
 
-  const filtered = useMemo(
-    () => (tab === "All" ? apps : apps.filter((a) => a.status === tab)),
-    [apps, tab],
+  const filtered = useMemo(() => {
+    if (tab === "all") return applications;
+    return applications.filter((a) => a.status === tab);
+  }, [applications, tab]);
+
+  const avgReviewTime = useMemo(
+    () => calculateAvgReviewTime(applications),
+    [applications]
   );
-
-  const approve = (id: string) =>
-    setApps((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "Approved", rejectionReason: undefined } : a)),
-    );
-
-  const reject = (id: string, reason: string) =>
-    setApps((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "Rejected", rejectionReason: reason } : a)),
-    );
 
   return (
     <AppShell>
@@ -199,347 +86,485 @@ function AccountApplicationsPage() {
         <header>
           <h1 className="text-2xl font-semibold tracking-tight">Account Applications</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Review and approve new client applications.
+            Review en beoordeel inkomende aanvragen van nieuwe klanten.
           </p>
         </header>
 
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard
-            label="Pending"
-            value={counts.Pending.toString()}
-            icon={Clock}
-            accent="warning"
-            hint="Awaiting review"
-          />
-          <KpiCard
-            label="Approved"
-            value={counts.Approved.toString()}
-            icon={CheckCircle2}
-            accent="success"
-            hint="This month"
-          />
-          <KpiCard
-            label="Rejected"
-            value={counts.Rejected.toString()}
-            icon={XCircle}
-            accent="primary"
-            hint="This month"
-          />
-          <KpiCard
-            label="Avg. review time"
-            value="4.2h"
-            icon={Timer}
-            accent="violet"
-            hint="From submission"
-          />
-        </section>
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <KpiCard label="Pending" value={counts.pending.toString()} icon={Clock} accent="warning" />
+          <KpiCard label="Approved" value={counts.approved.toString()} icon={CheckCircle2} accent="success" />
+          <KpiCard label="Rejected" value={counts.rejected.toString()} icon={XCircle} accent="primary" />
+          <KpiCard label="Avg Review Time" value={avgReviewTime} icon={Timer} accent="violet" />
+        </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {(["Pending", "Approved", "Rejected", "All"] as FilterTab[]).map((t) => (
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1 rounded-xl border border-border bg-card/60 p-1 w-fit">
+          {(
+            [
+              { id: "pending", label: "Pending", count: counts.pending },
+              { id: "approved", label: "Approved", count: counts.approved },
+              { id: "rejected", label: "Rejected", count: counts.rejected },
+              { id: "all", label: "All", count: counts.all },
+            ] as const
+          ).map((t) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={t.id}
+              onClick={() => setTab(t.id)}
               className={cn(
-                "inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-medium transition",
-                tab === t
-                  ? "border-primary/40 bg-primary/15 text-primary-glow"
-                  : "border-border bg-card/60 text-muted-foreground hover:bg-card hover:text-foreground",
+                "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition",
+                tab === t.id
+                  ? "bg-primary/15 text-primary-glow ring-1 ring-inset ring-primary/30"
+                  : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
               )}
             >
-              {t}
+              {t.label}
               <span
                 className={cn(
-                  "rounded-full px-1.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset tabular-nums",
-                  tab === t
-                    ? "bg-primary/20 text-primary-glow ring-primary/30"
-                    : "bg-background/40 text-muted-foreground ring-border",
+                  "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
+                  tab === t.id
+                    ? "bg-primary/20 text-primary-glow"
+                    : "bg-muted text-muted-foreground"
                 )}
               >
-                {counts[t]}
+                {t.count}
               </span>
             </button>
           ))}
         </div>
 
-        <div className="space-y-3">
-          {filtered.length === 0 ? (
-            <GlassCard className="py-12 text-center">
-              <p className="text-sm text-muted-foreground">No applications in this view.</p>
-            </GlassCard>
-          ) : (
-            filtered.map((a) => (
-              <ApplicationRow
-                key={a.id}
-                app={a}
-                onApprove={() => setApproveTarget(a)}
-                onReject={() => setRejectTarget(a)}
-                onView={() => setDetailTarget(a)}
+        {/* Loading */}
+        {loading && (
+          <GlassCard className="flex flex-col items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-primary-glow" />
+            <p className="mt-3 text-sm text-muted-foreground">Applications laden…</p>
+          </GlassCard>
+        )}
+
+        {/* Error */}
+        {error && !loading && (
+          <GlassCard className="border-destructive/30 bg-destructive/5">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 text-destructive" />
+              <div>
+                <p className="text-sm font-semibold text-destructive">Er ging iets mis</p>
+                <p className="mt-1 text-xs text-muted-foreground">{error}</p>
+              </div>
+            </div>
+          </GlassCard>
+        )}
+
+        {/* Empty */}
+        {!loading && !error && filtered.length === 0 && (
+          <GlassCard className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-2xl bg-muted/20 p-4 ring-1 ring-inset ring-border">
+              <Clock className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <p className="mt-4 text-base font-semibold">Geen applications</p>
+            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+              {tab === "pending"
+                ? "Er zijn geen pending applications op dit moment."
+                : `Geen ${tab} applications gevonden.`}
+            </p>
+          </GlassCard>
+        )}
+
+        {/* Application Cards */}
+        {!loading && !error && filtered.length > 0 && (
+          <div className="space-y-3">
+            {filtered.map((app) => (
+              <ApplicationCard
+                key={app.id}
+                app={app}
+                onApprove={() => setApproveTarget(app)}
+                onReject={() => setRejectTarget(app)}
+                onViewDetails={() => setDetailTarget(app)}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <ApproveDialog
+      {/* Modals */}
+      <ApproveModal
         app={approveTarget}
         onClose={() => setApproveTarget(null)}
-        onConfirm={(id) => {
-          approve(id);
-          setApproveTarget(null);
+        onSuccess={() => {
+          void refetch(); // Refresh list after approve
         }}
       />
-      <RejectDialog
+
+      <RejectModal
         app={rejectTarget}
         onClose={() => setRejectTarget(null)}
-        onConfirm={(id, reason) => {
-          reject(id, reason);
-          setRejectTarget(null);
+        onSuccess={() => {
+          void refetch(); // Refresh list after reject
         }}
       />
-      <DetailDialog
+
+      <DetailModal
         app={detailTarget}
         onClose={() => setDetailTarget(null)}
-        onApprove={(app) => {
+        onApprove={() => {
+          setApproveTarget(detailTarget);
           setDetailTarget(null);
-          setApproveTarget(app);
         }}
-        onReject={(app) => {
+        onReject={() => {
+          setRejectTarget(detailTarget);
           setDetailTarget(null);
-          setRejectTarget(app);
         }}
       />
     </AppShell>
   );
 }
 
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
+// ============================================
+// APPLICATION CARD
+// ============================================
 
-function ApplicationRow({
+function ApplicationCard({
   app,
   onApprove,
   onReject,
-  onView,
+  onViewDetails,
 }: {
   app: Application;
   onApprove: () => void;
   onReject: () => void;
-  onView: () => void;
+  onViewDetails: () => void;
 }) {
-  const variant =
-    app.status === "Pending" ? "pending" : app.status === "Approved" ? "success" : "danger";
+  const statusVariant =
+    app.status === "pending"
+      ? "warning"
+      : app.status === "approved"
+        ? "success"
+        : "destructive";
+
+  const initials = app.contact_name
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
   return (
-    <GlassCard>
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex min-w-0 items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-violet/30 ring-1 ring-inset ring-border">
-            <Building2 className="h-5 w-5 text-primary-glow" />
+    <GlassCard className="transition hover:border-border-strong">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-4">
+          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet text-sm font-semibold text-white">
+            {initials}
           </div>
-          <div className="min-w-0">
+
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-lg font-semibold tracking-tight">{app.company}</h3>
-              <StatusPill variant={variant}>{app.status}</StatusPill>
+              <h3 className="text-base font-semibold tracking-tight">
+                {app.company_name}
+              </h3>
+              <StatusPill variant={statusVariant}>
+                {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+              </StatusPill>
             </div>
+            <p className="mt-0.5 text-sm text-muted-foreground">{app.contact_name}</p>
 
-            <div className="mt-2 flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-primary to-violet text-[10px] font-semibold text-white">
-                {initials(app.contact)}
-              </span>
-              <span className="text-sm text-foreground">{app.contact}</span>
-              <span className="text-xs text-muted-foreground">· applied {app.appliedAt}</span>
-            </div>
-
-            <div className="mt-3 grid gap-x-6 gap-y-1.5 text-xs text-muted-foreground sm:grid-cols-2">
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5" /> {app.email}
+                <Mail className="h-3 w-3" />
+                {app.contact_email}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5" /> {app.phone}
-              </span>
-            </div>
-
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <Hash className="h-3 w-3" /> KVK {app.kvk}
+                <Phone className="h-3 w-3" />
+                {app.contact_phone}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <FileBadge className="h-3 w-3" /> {app.vat}
+                <Hash className="h-3 w-3" />
+                KVK: {app.kvk_number}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Landmark className="h-3 w-3" /> {app.iban}
+                <FileBadge className="h-3 w-3" />
+                BTW: {app.vat_number}
               </span>
             </div>
 
-            {app.status === "Rejected" && app.rejectionReason && (
-              <p className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 px-2.5 py-1.5 text-xs text-destructive">
-                Reason: {app.rejectionReason}
-              </p>
+            {app.status === "rejected" && app.rejection_reason && (
+              <div className="mt-3 rounded-md border border-destructive/30 bg-destructive/5 p-2">
+                <p className="text-xs text-destructive">
+                  <span className="font-semibold">Afgewezen:</span> {app.rejection_reason}
+                </p>
+              </div>
             )}
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2 lg:flex-col lg:items-end">
-          {app.status === "Pending" ? (
-            <>
-              <button
-                onClick={onApprove}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-success px-3 py-2 text-xs font-semibold text-success-foreground shadow-elegant transition hover:brightness-110"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5" /> Approve
-              </button>
-              <button
-                onClick={onReject}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive transition hover:bg-destructive/20"
-              >
-                <X className="h-3.5 w-3.5" /> Reject
-              </button>
-            </>
-          ) : null}
-          <button
-            onClick={onView}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card/60 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
-          >
-            <Eye className="h-3.5 w-3.5" /> View Details
-          </button>
+        <div className="flex flex-shrink-0 flex-col items-end gap-2">
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Calendar className="h-3 w-3" />
+            {formatRelativeTime(app.created_at!)}
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onViewDetails}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium transition hover:border-border-strong hover:bg-accent"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              Details
+            </button>
+
+            {app.status === "pending" && (
+              <>
+                <button
+                  onClick={onReject}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive transition hover:bg-destructive/20"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Reject
+                </button>
+                <button
+                  onClick={onApprove}
+                  className="inline-flex items-center gap-1.5 rounded-lg gradient-primary px-3 py-1.5 text-xs font-semibold text-white shadow-glow transition hover:brightness-110"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Approve
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </GlassCard>
   );
 }
 
-function ApproveDialog({
+// ============================================
+// APPROVE MODAL
+// ============================================
+
+function ApproveModal({
   app,
   onClose,
-  onConfirm,
+  onSuccess,
 }: {
   app: Application | null;
   onClose: () => void;
-  onConfirm: (id: string) => void;
+  onSuccess: () => void;
 }) {
-  return (
-    <Dialog open={!!app} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="border-border bg-card/95 backdrop-blur-xl">
-        <DialogHeader>
-          <DialogTitle>Approve application</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to approve <span className="font-medium text-foreground">{app?.company}</span>?
-          </DialogDescription>
-        </DialogHeader>
-        <div className="rounded-lg border border-primary/20 bg-primary/10 p-3 text-xs text-muted-foreground">
-          This will create a user account for <span className="text-foreground">{app?.contact}</span>{" "}
-          ({app?.email}) and send a welcome email with login instructions.
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => app && onConfirm(app.id)}
-            className="bg-success text-success-foreground hover:brightness-110"
-          >
-            <CheckCircle2 className="h-4 w-4" /> Confirm Approve
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+  const [submitting, setSubmitting] = useState(false);
+  const [tempPassword, setTempPassword] = useState<string | null>(null);
 
-const REJECT_REASONS = ["KVK invalid", "Duplicate", "Other"] as const;
-type RejectReason = (typeof REJECT_REASONS)[number];
+  const handleApprove = async () => {
+    if (!app) return;
 
-function RejectDialog({
-  app,
-  onClose,
-  onConfirm,
-}: {
-  app: Application | null;
-  onClose: () => void;
-  onConfirm: (id: string, reason: string) => void;
-}) {
-  const [reason, setReason] = useState<RejectReason>("KVK invalid");
-  const [custom, setCustom] = useState("");
+    setSubmitting(true);
+    const result = await approveApplication(app.id);
+    setSubmitting(false);
 
-  const final = reason === "Other" ? custom.trim() || "Other" : reason + (custom.trim() ? ` — ${custom.trim()}` : "");
+    if (result.success) {
+      setTempPassword(result.tempPassword);
+      toast.success(`${app.company_name} is goedgekeurd!`);
+      onSuccess(); // Trigger refetch in parent
+    } else {
+      toast.error(`Kon niet goedkeuren: ${result.error}`);
+    }
+  };
+
+  const handleCopyPassword = () => {
+    if (!tempPassword) return;
+    navigator.clipboard.writeText(tempPassword);
+    toast.success("Password gekopieerd!");
+  };
+
+  const handleClose = () => {
+    setTempPassword(null);
+    onClose();
+  };
+
+  if (!app) return null;
 
   return (
-    <Dialog
-      open={!!app}
-      onOpenChange={(o) => {
-        if (!o) {
-          onClose();
-          setReason("KVK invalid");
-          setCustom("");
-        }
-      }}
-    >
-      <DialogContent className="border-border bg-card/95 backdrop-blur-xl">
-        <DialogHeader>
-          <DialogTitle>Reject application</DialogTitle>
-          <DialogDescription>
-            Reject <span className="font-medium text-foreground">{app?.company}</span>. The applicant will be notified by email.
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog open={!!app} onOpenChange={handleClose}>
+      <DialogContent>
+        {tempPassword ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-success" />
+                Account Aangemaakt
+              </DialogTitle>
+              <DialogDescription>
+                {app.company_name} is goedgekeurd. Deel onderstaande gegevens met de klant.
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="space-y-3">
-          <div>
-            <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Reason
-            </label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {REJECT_REASONS.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setReason(r)}
-                  className={cn(
-                    "rounded-lg border px-3 py-1.5 text-xs font-medium transition",
-                    reason === r
-                      ? "border-destructive/40 bg-destructive/15 text-destructive"
-                      : "border-border bg-card/60 text-muted-foreground hover:bg-card hover:text-foreground",
-                  )}
-                >
-                  {r}
-                </button>
-              ))}
+            <div className="my-4 space-y-3">
+              <div className="rounded-lg border border-border bg-background/40 p-3">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">Email</p>
+                <p className="mt-1 font-mono text-sm">{app.contact_email}</p>
+              </div>
+
+              <div className="rounded-lg border border-warning/30 bg-warning/5 p-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs uppercase tracking-wider text-warning">Tijdelijk Wachtwoord</p>
+                  <button
+                    onClick={handleCopyPassword}
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning hover:bg-warning/10"
+                  >
+                    <Copy className="h-3 w-3" />
+                    Copy
+                  </button>
+                </div>
+                <p className="mt-1 font-mono text-sm">{tempPassword}</p>
+              </div>
+
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
+                <p className="text-xs text-muted-foreground">
+                  💡 <span className="font-semibold">Volgende stap:</span> Stuur deze gegevens handmatig naar de klant. In Phase 2.2 wordt dit automatisch via welcome email.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {reason === "Other" ? "Custom reason" : "Additional notes (optional)"}
-            </label>
-            <Textarea
-              value={custom}
-              onChange={(e) => setCustom(e.target.value)}
-              placeholder={
-                reason === "Other"
-                  ? "Explain why this application is being rejected…"
-                  : "Add any extra context for the applicant…"
-              }
-              className="mt-2"
-              rows={3}
-            />
-          </div>
+            <DialogFooter>
+              <Button onClick={handleClose} className="w-full">Sluiten</Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>Applicatie Goedkeuren</DialogTitle>
+              <DialogDescription>
+                Je staat op het punt <strong>{app.company_name}</strong> goed te keuren.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="my-4 space-y-3">
+              <div className="rounded-lg border border-border bg-background/40 p-3">
+                <p className="text-sm"><strong>Wat gebeurt er:</strong></p>
+                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <li>✓ Organization wordt aangemaakt</li>
+                  <li>✓ User account wordt aangemaakt</li>
+                  <li>✓ Tijdelijk wachtwoord wordt gegenereerd</li>
+                  <li>✓ Applicatie status wordt geüpdatet</li>
+                </ul>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={handleClose} disabled={submitting}>
+                Annuleren
+              </Button>
+              <Button
+                onClick={handleApprove}
+                disabled={submitting}
+                className="gradient-primary text-white shadow-glow"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Goedkeuren…
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-4 w-4" />
+                    Goedkeuren
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ============================================
+// REJECT MODAL
+// ============================================
+
+function RejectModal({
+  app,
+  onClose,
+  onSuccess,
+}: {
+  app: Application | null;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleReject = async () => {
+    if (!app || !reason.trim()) return;
+
+    setSubmitting(true);
+    const result = await rejectApplication(app.id, reason);
+    setSubmitting(false);
+
+    if (result.success) {
+      toast.success(`${app.company_name} afgewezen`);
+      setReason("");
+      onSuccess(); // Trigger refetch
+      onClose();
+    } else {
+      toast.error(`Kon niet afwijzen: ${result.error}`);
+    }
+  };
+
+  const handleClose = () => {
+    if (submitting) return;
+    setReason("");
+    onClose();
+  };
+
+  if (!app) return null;
+
+  return (
+    <Dialog open={!!app} onOpenChange={handleClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Applicatie Afwijzen</DialogTitle>
+          <DialogDescription>
+            Je wijst de aanvraag van <strong>{app.company_name}</strong> af. Geef een reden op.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="my-4 space-y-2">
+          <label
+            htmlFor="reason"
+            className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+          >
+            Reden voor afwijzing *
+          </label>
+          <Textarea
+            id="reason"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Bijv. KVK nummer kon niet geverifieerd worden..."
+            disabled={submitting}
+            rows={4}
+            className="resize-none"
+          />
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
+          <Button variant="outline" onClick={handleClose} disabled={submitting}>
+            Annuleren
           </Button>
           <Button
-            variant="destructive"
-            onClick={() => app && onConfirm(app.id, final)}
-            disabled={reason === "Other" && custom.trim().length === 0}
+            onClick={handleReject}
+            disabled={submitting || !reason.trim()}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            <X className="h-4 w-4" /> Confirm Reject
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Afwijzen…
+              </>
+            ) : (
+              <>
+                <X className="h-4 w-4" />
+                Afwijzen
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -547,7 +572,11 @@ function RejectDialog({
   );
 }
 
-function DetailDialog({
+// ============================================
+// DETAIL MODAL
+// ============================================
+
+function DetailModal({
   app,
   onClose,
   onApprove,
@@ -555,78 +584,97 @@ function DetailDialog({
 }: {
   app: Application | null;
   onClose: () => void;
-  onApprove: (app: Application) => void;
-  onReject: (app: Application) => void;
+  onApprove: () => void;
+  onReject: () => void;
 }) {
   if (!app) return null;
-  const variant =
-    app.status === "Pending" ? "pending" : app.status === "Approved" ? "success" : "danger";
+
+  const statusVariant =
+    app.status === "pending"
+      ? "warning"
+      : app.status === "approved"
+        ? "success"
+        : "destructive";
 
   return (
-    <Dialog open={!!app} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-2xl border-border bg-card/95 backdrop-blur-xl">
+    <Dialog open={!!app} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-violet/30 ring-1 ring-inset ring-border">
-              <Building2 className="h-5 w-5 text-primary-glow" />
-            </div>
-            <div>
-              <DialogTitle className="flex items-center gap-2">
-                {app.company}
-                <StatusPill variant={variant}>{app.status}</StatusPill>
-              </DialogTitle>
-              <DialogDescription>Applied {app.appliedAt}</DialogDescription>
-            </div>
+            <DialogTitle>{app.company_name}</DialogTitle>
+            <StatusPill variant={statusVariant}>
+              {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+            </StatusPill>
           </div>
+          <DialogDescription>
+            Aangevraagd {formatRelativeTime(app.created_at!)}
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Section title="Company">
-            <DetailRow icon={Building2} label="Name" value={app.company} />
-            <DetailRow icon={Hash} label="KVK" value={app.kvk} />
-            <DetailRow icon={FileBadge} label="BTW" value={app.vat} />
-            <DetailRow icon={Landmark} label="IBAN" value={app.iban} />
-            <DetailRow
-              icon={Calendar}
-              label="Address"
-              value={`${app.address}, ${app.city}, ${app.country}`}
-            />
-            <DetailRow icon={Eye} label="Website" value={app.website} />
-          </Section>
-          <Section title="Contact">
-            <DetailRow icon={User} label="Name" value={app.contact} />
-            <DetailRow icon={Mail} label="Email" value={app.email} />
-            <DetailRow icon={Phone} label="Phone" value={app.phone} />
-          </Section>
+        <div className="my-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Bedrijfsgegevens
+            </h3>
+            <div className="space-y-2.5">
+              <DetailField icon={Building2} label="Bedrijfsnaam" value={app.company_name} />
+              <DetailField icon={Hash} label="KVK Nummer" value={app.kvk_number} />
+              <DetailField icon={FileBadge} label="BTW Nummer" value={app.vat_number} />
+              {app.iban && <DetailField icon={Landmark} label="IBAN" value={app.iban} />}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Contactgegevens
+            </h3>
+            <div className="space-y-2.5">
+              <DetailField icon={User} label="Naam" value={app.contact_name} />
+              <DetailField icon={Mail} label="Email" value={app.contact_email} />
+              <DetailField icon={Phone} label="Telefoon" value={app.contact_phone} />
+            </div>
+          </div>
         </div>
 
-        {app.status === "Rejected" && app.rejectionReason && (
-          <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
-            <span className="font-semibold">Rejection reason:</span> {app.rejectionReason}
+        {app.status === "rejected" && app.rejection_reason && (
+          <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-destructive">
+              Reden voor afwijzing
+            </p>
+            <p className="mt-1 text-sm text-foreground">{app.rejection_reason}</p>
+          </div>
+        )}
+
+        {app.reviewed_at && (
+          <div className="rounded-lg border border-border bg-background/40 p-3">
+            <p className="text-xs text-muted-foreground">
+              Beoordeeld op{" "}
+              <span className="font-medium text-foreground">
+                {new Date(app.reviewed_at).toLocaleString("nl-NL")}
+              </span>
+            </p>
           </div>
         )}
 
         <DialogFooter>
-          {app.status === "Pending" ? (
+          {app.status === "pending" ? (
             <>
+              <Button variant="outline" onClick={onClose}>Sluiten</Button>
               <Button
                 variant="outline"
-                onClick={() => onReject(app)}
-                className="border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
+                onClick={onReject}
+                className="border-destructive/30 text-destructive hover:bg-destructive/10"
               >
-                <X className="h-4 w-4" /> Reject
+                <X className="h-4 w-4" />
+                Reject
               </Button>
-              <Button
-                onClick={() => onApprove(app)}
-                className="bg-success text-success-foreground hover:brightness-110"
-              >
-                <CheckCircle2 className="h-4 w-4" /> Approve
+              <Button onClick={onApprove} className="gradient-primary text-white shadow-glow">
+                <CheckCircle2 className="h-4 w-4" />
+                Approve
               </Button>
             </>
           ) : (
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
+            <Button onClick={onClose}>Sluiten</Button>
           )}
         </DialogFooter>
       </DialogContent>
@@ -634,20 +682,7 @@ function DetailDialog({
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </p>
-      <div className="space-y-2 rounded-lg border border-border bg-background/40 p-3">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({
+function DetailField({
   icon: Icon,
   label,
   value,
@@ -657,11 +692,11 @@ function DetailRow({
   value: string;
 }) {
   return (
-    <div className="flex items-start gap-2 text-xs">
-      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+    <div className="flex items-start gap-2.5">
+      <Icon className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
       <div className="min-w-0 flex-1">
         <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
-        <p className="truncate text-foreground">{value}</p>
+        <p className="break-words text-sm font-medium">{value}</p>
       </div>
     </div>
   );
